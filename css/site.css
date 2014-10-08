@@ -14,6 +14,14 @@ div.orange{
 	background-color: #FF8D27;
 }
 
+.fgWhite{
+	color: #fff;
+}
+
+.fgGreen{
+	color: #35c543;
+}
+
 h1.white,h2.white,h3.white,h4.white,p.white{
 	color: #fff;
 }
@@ -42,6 +50,10 @@ h1,h2,h3,h4{
 	margin-top: 20px;
 }
 
+.row-offset-xs{
+	margin-top: 10px;
+}
+
 .back-arrow{
 	font-size: 30px;
 	padding-top: 10px;
@@ -55,6 +67,11 @@ h1,h2,h3,h4{
 }
 
 /* ADMIN */
+
+.topNav{
+	position: fixed;
+	width: 100%;
+}
 
 .adminHomeItem{
 	border-top: 1px solid #ddd;
@@ -138,4 +155,37 @@ h1,h2,h3,h4{
 
 .admin-bottom-nav{
 	text-align: center;
+}
+
+.ftr-offset{
+	height: 100px;
+	padding-top: 10px;
+}
+
+.nav-offset{
+	height: 100px;
+	padding-bottom: 10px;
+}
+
+/** practices **/
+
+.addButton{
+	font-size: 20px;
+	margin-right: 25px;
+}
+.addButtonSm{
+	font-size: 14px;	
+	margin-right: 25px;
+}
+.addButton:hover,.addButtonSm:hover{
+	cursor: pointer;
+}
+
+.formLabel{
+	font-weight: 100;
+	color: #999;
+}
+
+.skill_item{
+	
 }

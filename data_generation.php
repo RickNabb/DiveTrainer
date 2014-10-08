@@ -10,6 +10,8 @@
 		'Smith', 'Johnson', 'Johns', 'Mans', 'Rabb', 'Bynoe', 'Alquhist', 'McMahon', 'MacDonald',
 		'Meat', 'Mere', 'Mixalot');
 
+	// Diver table population
+	/*
 	foreach($fnames as $fname){
 		foreach($lnames as $lname){
 		
@@ -26,7 +28,29 @@
 				break;
 			}
 		}
-	}
+	}*/
 
+	// Skills table population
+
+	/*$skill_titles = array('Jumprope', 'Armcircles', 'Pike jumps on Dryboard', 'Standing 1/2 twist Drills', 
+		'Lunges');
+	$levels = array('1', '2', '3');
+
+	foreach ($skill_titles as $skill) {
+		foreach($levels as $level){
+
+			$query = sprintf("INSERT INTO %s (name, level, description)
+				VALUES ('%s', '%s', '%s')",
+				SKILLS_TABLE,
+				$skill,
+				$level,
+				"This is the description for " . $skill . " at level " . $level);
+			$result = mysql_query($query, $conn);
+			if(!$result){
+				echo 'ERROR!';
+				break;
+			}
+		}
+	}*/
 
 ?>

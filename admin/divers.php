@@ -6,25 +6,26 @@
 
 	<?php 
 		include("include.php"); 
-		require_once("./../bootstrap.php");
-		require_once('../db.php'); // HACK : Since bootstrap.php looks in the wrong folder
+		require_once("./bootstrap.php");
 	?>
 </head>
 <body>
-	<div class="row blue">
-		<div class="col-sm-offset-1 col-xs-offset-1">
-			<h4 class="white ptsans">Welcome, Cliff!</h4>
+	<div class="topNav">
+		<div class="row blue">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<h4 class="white ptsans">Welcome, Cliff!</h4>
+			</div>
 		</div>
-	</div>
 
-	<nav class="navbar navbar-default" role="navigation">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-				<p class="navbar-title">Coach</p>
-			</div>			
-		</div>
-	</nav>
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
+					<p class="navbar-title">Coach</p>
+				</div>			
+			</div>
+		</nav>
+	</div>
 
 
 	<div class="container container-fluid">	
@@ -58,7 +59,7 @@
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Divers</p></li>
-			<li><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></li>
+			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
 			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
 		</ul>
 	</div>

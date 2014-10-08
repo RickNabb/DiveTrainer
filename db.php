@@ -2,6 +2,8 @@
 
 
 define('DIVERS_TABLE', 'divers');
+define('PRACTICES_TABLE', 'practices');
+define('SKILLS_TABLE', 'skills');
 
 function getConnection(){
 
