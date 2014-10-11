@@ -20,6 +20,10 @@
 			}
 		}
 
+		function register(){
+			window.location="./register.php";
+		}
+		
 	</script>
 </head>
 <body>
@@ -38,14 +42,18 @@
 
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-8 col-sm-8">
-				<input type="password" class="form-control"  id="password" />
+				<input type="password" class="form-control" placeholder="password"  id="password" />
 			</div>
 		</div>
 
 		<div class="row row-offset-lg">
-			<div class="col-sm-offset-4 col-xs-offset-4 col-xs-4 col-sm-4">
+			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-2 col-sm-2">
 				<input type="button" class="btn btn-default" value="Log In"
 					onclick="logIn();"/>
+			</div>
+			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-2 col-sm-2">
+				<input type="button" class="btn btn-default" value="Register" 
+					onclick="register();"/>
 			</div>
 		</div>
 	</div>

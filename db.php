@@ -2,8 +2,10 @@
 
 
 define('DIVERS_TABLE', 'divers');
+define('COACHES_TABLE', 'coaches');
 define('PRACTICES_TABLE', 'practices');
 define('SKILLS_TABLE', 'skills');
+include("bootstrap.php");
 
 function getConnection(){
 
