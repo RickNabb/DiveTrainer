@@ -25,38 +25,57 @@
 	</div>
 
 
-	<div class="container container-fluid">	
+	<div class="container container-fluid">
+
+		<div class="nav-offset"></div>
+
 		<div class="row">
-			<div class="col-xs-offset-1">
-				<h4>All Divers</h4>
+			<div style="margin-left: 10px; color: #21aeff;" class="pull-left"><h4>Past 10 Practices</h4></div>
+			<div class="pull-right">
+				<span class="glyphicon glyphicon-plus-sign addButton fgGreen" onclick="window.location='./makePractice.php';"></span>
 			</div>
 		</div>
 
 		<?php
+
 			$conn = getConnection();
 			$query = sprintf("SELECT * FROM %s",
-				DIVERS_TABLE);
+				PRACTICES_TABLE);
 
 			$result = mysql_query($query, $conn);
 			if(!$result){
-				$message = "Error finding divers";
+				$message = "Error retrieving practices";
 				throw new Exception($message);
 			}
 
 			while($row = mysql_fetch_assoc($result)){
-					echo '<div class="row">';
-					echo '<div class="adminHomeItem">';
-					echo "<h4>" . $row['fname'] . ' ' . $row['lname'] . "</h4></div></div>";
+
+				echo "<div class='row'>
+						<div class='goalItem'>
+							<h3>" . date_format($row['date']) . "</h3>
+							<span class='glyphicon glyphicon-chevron-right'></span>
+						</div>
+					</div>";
 			}
 
 		?>
+
+		<div class="row">
+			<div class="goalItem">
+				<h3>September 29, 2014</h3>
+				<span class="glyphicon glyphicon-chevron-right"></span>
+			</div>
+		</div>
+
+		<div class="ftr-offset"></div>
 	</div>
+		
 
 	<div class="admin-bottom-nav">
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
-			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Divers</p></li>
-			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
+			<li><a href="./divers.php"><span class="glyphicon glyphicon-user"></span><p>Divers</p></a></li>
+			<li class="current"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></li>
 			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
 		</ul>
 	</div>

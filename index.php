@@ -9,15 +9,21 @@
 	<script>
 
 		function logIn(){
-			var userId = $("#inputDiverID").val();
+			var userId = $("#inputID").val();
 			var password = $("#password").val();
-
-			if(userId === "d123456789" && password === "password"){
-				window.location="./diver/index.php";
-			}
-			else if(userId === "a123456789" && password === "password"){
-				window.location="./admin/index.php";
-			}
+			
+			//TODO: log in coaches or divers
+			$.post("./common/diver.php", {diverId:userId, method:"log_in"},
+			function(result) {
+				if (result == '') {
+					$.post("./common/diver.php", {method:"load_info"}).done(function() {
+						window.location="./diver/index.php";
+					});
+				}
+				else {
+					alert(result);
+				}
+			});
 		}
 
 		function register(){
@@ -36,7 +42,7 @@
 
 		<div class="row row-offset-md">
 			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-8 col-sm-8">
-				<input type="text" class="form-control" placeholder="Diver ID" id="inputDiverID"/>
+				<input type="text" class="form-control" placeholder="User ID" id="inputID"/>
 			</div>
 		</div>
 

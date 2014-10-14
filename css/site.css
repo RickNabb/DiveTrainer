@@ -194,3 +194,11 @@ h1,h2,h3,h4{
 .skill_item{
 	
 }
+
+/** Goals **/
+
+.goalItem{
+	border-top: 1px solid #ddd;
+	border-bottom: 1px solid #ddd;
+	padding: 5px;
+}

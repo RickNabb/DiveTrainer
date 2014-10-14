@@ -4,35 +4,26 @@
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<?php include("include.php"); 
-		require_once("./bootstrap.php"); ?>
-
+	<?php require("include.php"); ?>
+	
 	<script>
 
 		function create_diver(){
-			var fname = $("#fname").val();
-			var lname = $("#lname").val();
-			var coach_id = $("#coach_id").val();
-
+			var fname = $("#input_fname").val();
+			var lname = $("#input_lname").val();
+			var coachId = $("#input_coachID").val();
 			
-			
-			var input_data = {
-				fname : $("#input_title").val(),
-				lname : date_full,
-				coachId : coach_id
-			};
-
-			$.post({
-				url: "./common/diver.php",
-				data: input_data,
-				success: function(data){
-					if(data > 0){
-						window.location = "./index.php?success=true";
-					}
+			$.post("./common/diver.php", {fname:fname, lname:lname, coachId:coachId, method:"create_diver"},
+			function(result) {
+				if (result != '') {
+					alert(result);
+				}
+				else {
+					window.location="./index.php";
 				}
 			});
 		}
-
+		
 	</script>
 </head>
 <body>
@@ -42,19 +33,6 @@
 				<h4 class="white ptsans">Registration</h4>
 			</div>
 		</div>
-
-		<!--<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="row">
-					<div class="col-sm-offset-2 col-xs-3 col-sm-6">
-						<a href="./index.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					</div>
-					<div class="col-sm-offset-2 col-sm-2 row-offset-15">
-						Return to Login
-					</div>
-				</div>
-			</div>
-		</nav>-->
 		
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
@@ -68,7 +46,7 @@
 	<div class="container container-fluid">
 		<div class="nav-offset"></div>
 
-		<!--<div class="row row-offset-sm">
+		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1">
 				<label for="date_month" class="formLabel">First Name</label><br />
 				<input type="text" class="form-control" placeholder="Enter Name..." style="width:80%;" id="input_fname"/>
@@ -96,27 +74,6 @@
 		</div>
 
 		<div class="ftr-offset"></div>
-	</div>-->
-	
-	<form role="form" method="post" action="./common/diver.php">
-		<div class="form-group">
-			<label for="date_month" class="formLabel">First Name</label><br />
-			<input type="text" class="form-control" placeholder="Enter Name..." style="width:80%;" name="fname" id="input_fname"/>
-		</div>
-
-		<div class="form-group">
-			<label for="date_month" class="formLabel">Last Name</label><br />
-			<input type="text" class="form-control" placeholder="Enter Name..." style="width:80%;" name="lname" id="input_lname"/>
-		</div>
-	
-		<div class="form-group">
-			<label for="date_month" class="formLabel">Coach ID</label><br />
-			<input type="text" class="form-control" placeholder="Enter Your Coach's ID..." style="width:80%;" name="coachId" id="input_coachID"/>
-		</div>
-	
-		<div class="col">
-			<button class="btn btn-default" type="submit">Finish</button>
-		</div>
-	</form>
+	</div>
 </body>
 </html>
