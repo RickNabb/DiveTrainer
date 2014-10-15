@@ -4,25 +4,19 @@
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<?php include("include.php"); ?>
+	<?php
+
+		include("include.php"); 
+
+		// TODO: Check session data to see if the user is trying to cheat
+		// his/her way into the login screen
+		// Probably use auth.php to verify session accuracy
+
+		?>
 </head>
-<body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php session_start(); echo $_SESSION['dive_trainer']['fname']; ?>!</h4>
-			</div>
-		</div>
+<body>	
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<p class="navbar-title">Diver</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
-
+	<?php include('../common/header.php'); echo_header('Diver'); ?>
 
 	<div class="container container-fluid">
 		<div class="nav-offset"></div>

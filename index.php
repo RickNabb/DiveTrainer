@@ -11,19 +11,24 @@
 		function logIn(){
 			var userId = $("#inputID").val();
 			var password = $("#password").val();
-			
-			//TODO: log in coaches or divers
-			$.post("./common/diver.php", {diverId:userId, method:"log_in"},
-			function(result) {
-				if (result == '') {
-					$.post("./common/diver.php", {method:"load_info"}).done(function() {
-						window.location="./diver/index.php";
-					});
-				}
-				else {
-					alert(result);
-				}
-			});
+			var first_char = $("#inputID").val().substr(0, 1);
+			var input_data = {
+				method : "log_in",
+				ident : first_char,
+				authId : userId.substr(2),
+				pass : password
+			};
+
+			$.get('./common/auth.php',
+				input_data,
+				function(data, success){
+					if(parseInt(data) > 0){
+						window.location = './admin/index.php';
+					}
+					else{
+						alert(data);
+					}
+				});			
 		}
 
 		function register(){

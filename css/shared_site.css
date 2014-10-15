@@ -2,6 +2,15 @@ body{
 	overflow: hidden;
 }
 
+a{
+	color: #999;
+}
+
+a:hover{
+	color: #000;
+	text-decoration: none;
+}
+
 div.blue{
 	background-color: #21AEFF;
 }
@@ -64,6 +73,7 @@ h1,h2,h3,h4{
 	padding-top: 10px;
 	padding-left: 10px;
 	color: #999;
+	position: absolute;
 }
 
 .back-arrow:hover{
@@ -76,6 +86,7 @@ h1,h2,h3,h4{
 .topNav{
 	position: fixed;
 	width: 100%;
+	z-index: 100;
 }
 
 .adminHomeItem{
@@ -122,6 +133,15 @@ h1,h2,h3,h4{
 	padding-top: 7px;
 }
 
+.navbar-title-sm{
+	color: #444;
+	font-size: 20px;
+	text-align: center;
+	vertical-align: middle;
+	margin: 0;
+	padding-top: 12px;
+}
+
 .admin-bottom-nav li.current,.admin-bottom-nav li.current span{
 	background-color: #21AEFF;
 	color: white;
@@ -138,15 +158,6 @@ h1,h2,h3,h4{
 
 .admin-bottom-nav ul{
  	padding: 0;
-}
-
-.admin-bottom-nav li{
-	display: inline-block;
-	width: 24%;
-	border-right: 1px solid #ddd;
-	padding-top: 10px;
-	height: 70px;
-	color: #999;
 }
 
 .admin-bottom-nav li:last-child{
@@ -201,4 +212,31 @@ h1,h2,h3,h4{
 	border-top: 1px solid #ddd;
 	border-bottom: 1px solid #ddd;
 	padding: 5px;
+}
+
+/** AJAX LOADER **/
+
+#loaderDiv{
+	display: none;
+
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background-color: #000;
+	opacity: 0.4;
+	z-index: 100;
+	top: 0;
+}
+
+#loaderDiv h4{
+	color: #fff;
+	text-align: center;
+	margin-top: 20px;
+}
+
+#loaderDiv img{
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 20%;
+	display: block;
 }

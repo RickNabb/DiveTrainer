@@ -47,6 +47,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	**/
 	else if($_POST['method'] == 'log_in' && isset($_POST['diverId'])) {
 		
+		// TODO: Create auth table so logging in has no dependence on diver
+		// Instead, the method will query the auth table, and the auth table
+		// is linked to diver by diver_id
+
 		$value = diver_exists($_POST['diverId']);
 		
 		// If the diver does not exist, store failure message in result

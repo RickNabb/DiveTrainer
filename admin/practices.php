@@ -7,22 +7,8 @@
 	<?php include("include.php"); ?>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, Cliff!</h4>
-			</div>
-		</div>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-					<p class="navbar-title">Coach</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
+	<?php include('../common/header.php'); echo_header('Coach'); ?>
 
 
 	<div class="container container-fluid">
@@ -30,7 +16,13 @@
 		<div class="nav-offset"></div>
 
 		<div class="row">
-			<div style="margin-left: 10px; color: #21aeff;" class="pull-left"><h4>Past 10 Practices</h4></div>
+			<select style="margin-left: 10px; color: #21aeff; font-size: 20px; border:none;" 
+				id="select_practice_filter" class="pull-left">
+				<option>Past 10 Practices</option>
+				<option>Past Week's Practices</option>
+				<option>Past Month's Practices</option>
+				<option>All Past Practices</option>
+			</select>
 			<div class="pull-right">
 				<span class="glyphicon glyphicon-plus-sign addButton fgGreen" onclick="window.location='./makePractice.php';"></span>
 			</div>
@@ -48,52 +40,31 @@
 				throw new Exception($message);
 			}
 
-			while($row = mysql_fetch_assoc($result)){
-
-				echo "<div class='row'>
-						<div class='adminHomeItem'>
-							<h3>" . date_format($row['date']) . "</h3>
-							<span class='glyphicon glyphicon-chevron-right'></span>
+			if(mysql_num_rows($result) == 0){
+				echo "<div class='row row-offset-md'>
+						<div class='col-xs-offset-1 col-sm-offset-1'>
+							<h4 style='color: #ccc;'>We didn't find any practices!</h4><br/>
+							<h4 style='color: #ccc;'>Make some practices with the icon at the top.</h4>
 						</div>
-					</div>";
+					   </div>";
+			}
+			else{
+				while($row = mysql_fetch_assoc($result)){
+
+					$date = new DateTime();
+					$dateItems = split('[/.-]', $row['date']);
+					$date->setDate(intval($dateItems[0]), intval($dateItems[1]), intval($dateItems[2]));
+
+					echo "<div class='row'>
+							<div class='adminHomeItem'>
+								<h3>" . date_format($date, 'F jS, Y') . "</h3>
+								<span class='glyphicon glyphicon-chevron-right'></span>
+							</div>
+						</div>";
+				}
 			}
 
-		?>
-
-		<div class="row">
-			<div class="adminHomeItem">
-				<h3>September 29, 2014</h3>
-				<span class="glyphicon glyphicon-chevron-right"></span>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="adminHomeItem">
-				<h3>September 26, 2014</h3>
-				<span class="glyphicon glyphicon-plus-sign" style="color: #35C543;"></span>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="adminHomeItem">
-				<h3>September 25, 2014</h3>
-				<span class="glyphicon glyphicon-plus-sign"></span>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="adminHomeItem">
-				<h3>September 24, 2014</h3>
-				<span class="glyphicon glyphicon-plus-sign"></span>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="adminHomeItem">
-				<h3>September 23, 2014</h3>
-				<span class="glyphicon glyphicon-plus-sign"></span>
-			</div>
-		</div>
+		?>		
 
 		<div class="ftr-offset"></div>
 	</div>

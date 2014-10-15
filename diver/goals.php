@@ -10,23 +10,8 @@
 	?>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php echo $_SESSION['dive_trainer']['fname']; ?>!</h4>
-			</div>
-		</div>
-
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-					<p class="navbar-title">Diver</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
-
+	
+	<?php include('header.php'); echo_header('Goals'); ?>
 
 	<div class="container container-fluid">
 
@@ -67,13 +52,6 @@
 		<div class="ftr-offset"></div>
 	</div>
 	
-	<div class="admin-bottom-nav">
-		<ul>
-			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
-			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Goals</p></li>
-			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
-			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
-		</ul>
-	</div>
+	<?php include('footer.php'); ?>
 </body>
 </html>

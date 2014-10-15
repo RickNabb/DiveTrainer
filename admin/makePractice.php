@@ -5,12 +5,13 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php include("include.php"); 
-		require_once("./bootstrap.php"); ?>
+		require_once("./bootstrap.php");
+		session_start(); ?>
 
 	<script>
 
 		function create_practice(){
-			var coach_id = '1000'; // TODO: Change this to a dynamic value!
+			var coach_id = <?php echo $_SESSION['dive_trainer']['coachId']; ?>; // TODO: Change this to a dynamic value!
 			var date_month = $("#date_month").val();
 			var months = {"Jan": '01', "Feb": "02", "Mar": "03", "Apr":"04", "May": "05",
 				"Jun":"06", "Jul":"07", "Aug":"08", "Sep":"09", "Oct":"10", "Nov":"11", "Dec":"12"};
@@ -34,9 +35,9 @@
 			});
 		}
 
-		function add_skills(){
+		function add_skills(section){
 
-			$("#skill_list").empty();
+			$("#" + section + "_skill_list").empty();
 
 			$("div.modal-body input").each(function(){
 				if(this.checked){
@@ -60,7 +61,7 @@
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					<!--<p class="navbar-title">Coach</p>-->
+					<p class="navbar-title-sm">Create Practice</p>
 				</div>			
 			</div>
 		</nav>
@@ -107,10 +108,6 @@
 
 		<div class="nav-offset"></div>
 
-		<div class="row">
-			<div style="color: #21aeff;" class="pull-left col-sm-offset-1 col-xs-offset-1"><h4>Create Practice</h4></div>
-		</div>
-
 		<div class="row row-offset-sm">
 			<label for="date_month" class="formLabel col-sm-offset-1 col-xs-offset-1">Select a Date</label><br />
 			<select id="date_month" class="col-sm-offset-1 col-xs-offset-1 form-control"
@@ -139,15 +136,89 @@
 			</div>
 		</div>
 
+		<!-- Warm Up Section -->
+
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1">
-				<label for="date_month" class="formLabel">Skills</label><br />
-				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Skills
+				<h4>Warm Up</h4>
+				<hr />
+			</div>
+		</div>
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<label for="date_month" class="formLabel">Exercises</label><br />
+				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
 				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
 			</div>
 		</div>
 
-		<div id="skill_list"></div>
+		<div id="warmup_skill_list"></div>
+
+		<!-- End Warm Up Section -->
+
+		<!-- Skills Section -->
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<h4>Skills</h4>
+				<hr />
+			</div>
+		</div>
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<label for="date_month" class="formLabel">Exercises</label><br />
+				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
+				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
+			</div>
+		</div>
+
+		<div id="skills_skill_list"></div>
+
+		<!-- End Skills Section -->
+
+		<!-- Conditioning Section -->
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<h4>Conditioning</h4>
+				<hr />
+			</div>
+		</div>
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<label for="date_month" class="formLabel">Exercises</label><br />
+				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
+				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
+			</div>
+		</div>
+
+		<div id="conditioning_skill_list"></div>
+
+		<!-- End Conditioning Section -->
+
+		<!-- Flexibility Section -->
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<h4>Flexibility</h4>
+				<hr />
+			</div>
+		</div>
+
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<label for="date_month" class="formLabel">Exercises</label><br />
+				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
+				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
+			</div>
+		</div>
+
+		<div id="flexibility_skill_list"></div>
+
+		<!-- End Flexibility Section -->
 
 		<div class="row row-offset-md">
 			<div class="col-sm-offset-9 col-xs-offset-9">

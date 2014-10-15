@@ -1,0 +1,8 @@
+.admin-bottom-nav li{
+	display: inline-block;
+	width: 24%;
+	border-right: 1px solid #ddd;
+	padding-top: 10px;
+	height: 70px;
+	color: #999;
+}

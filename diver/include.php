@@ -1,5 +1,6 @@
 <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
-<link href="../css/site.css" rel="stylesheet" type="text/css" />
+<link href="../css/diver_site.css" rel="stylesheet" type="text/css" />
+<link href="../css/shared_site.css" rel="stylesheet" type="text/css" />
 <!--<link href='http://fonts.googleapis.com/css?family=PT+Sans:700,400' rel='stylesheet' type='text/css'>-->
 <script src="../scripts/jquery.js"></script>
 <script src="../scripts/bootstrap.min.js"></script>

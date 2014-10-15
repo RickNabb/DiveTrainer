@@ -60,15 +60,25 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 * Function to create a goal and insert into the database
 * @param string $diverId : The diver that made the goal
 * @param Date $name : Name for the goal
-* @param int $startDate : The date the goal was set
-* @param int $endDate : The end date for the goal
+* @param int $startDate : The date the goal was set (format: m/d/Y)
+* @param int $endDate : The end date for the goal (format: m/d/Y)
 *
 * @return int n : Number of affected rows in the sql query
 * 	n >= 1 -> Insert worked, multiple rows affected
 *	n = 0 -> Insert failed, no rows affected
 **/
-function create_goal($diverId, $name, $startDate, $endDate){
+function create_goal($diverId, $name, $startDate_str, $endDate_str){
 	$conn = getConnection();
+
+	$startDate = new DateTime();
+	$endDate = new DateTime();
+
+	$startDateNums = split('[/.-]', $startDate_str);
+	$endDateNums = split('[/.-]', $endDate_str);
+
+	// setDate(year, month, day)
+	$startDate->setDate(intval($startDateNums[2]), intval($startDateNums[0]), intval($startDateNums[1]));
+	$endDate->setDate(intval($endDateNums[2]), intval($endDateNums[0]), intval($endDateNums[1]));
 	
 	// Attempt to add goal
 	$query = sprintf('INSERT INTO %s (diverId, name, startDate, endDate)
@@ -76,8 +86,8 @@ function create_goal($diverId, $name, $startDate, $endDate){
 		mysql_real_escape_string(GOALS_TABLE),
 		mysql_real_escape_string($diverId),
 		mysql_real_escape_string($name),
-		mysql_real_escape_string($startDate),
-		mysql_real_escape_string($endDate));
+		mysql_real_escape_string($startDate->format('Y:m:d H:i:s')),
+		mysql_real_escape_string($endDate->format('Y:m:d H:i:s')));
 
 	$result = mysql_query($query, $conn);
 	

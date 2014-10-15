@@ -7,23 +7,8 @@
 	<?php include("include.php"); ?>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, Cliff!</h4>
-			</div>
-		</div>
-
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-					<p class="navbar-title">Coach</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
-
+	
+	<?php include('../common/header.php'); echo_header('Coach'); ?>
 
 	<div class="container container-fluid">
 		<div class="nav-offset"></div>
@@ -52,10 +37,12 @@
 			</a>
 		</div>
 		<div class="row">
-			<div class="adminHomeItem">
-				<h3>Make Note</h3>
-				<span class="glyphicon glyphicon-chevron-right"></span>
-			</div>
+			<a href='./skills.php'>
+				<div class="adminHomeItem">
+					<h3>View Skills</h3>
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</div>
+			</a>
 		</div>
 		<div class="ftr-offset"></div>
 	</div>

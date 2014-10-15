@@ -21,25 +21,28 @@
 			var date_month_num = months.date_month;
 			var date_full = date_month_num + "/" + $("#date_day").val() + "/" + $("#date_year").val();
 
-			alert("Start post");
+			var date_now = new Date();
+
 			// Perform post
 			$.post("../common/goal.php", 
 				{
 					diverId:<?php echo $_SESSION['dive_trainer']['userId']; ?>,
 					name:$("#input_title").val(),
-					startDate:$.now(),
+					startDate: (date_now.getMonth()+1) + "/" + date_now.getDate() + "/" + (date_now.getYear() + 1900),
 					endDate:date_full,
 					method:"create_goal"
 				},
 			function(result) {
 				if (result != '') {
+					//alert(result);
 					alert(result);
+					window.location = './goals.php?error=true';
 				}
 				else {
 					window.location="./goals.php";
 				}
 			}).always(function(result) {
-				alert(result);
+				//alert(result);
 			});
 		}
 	
