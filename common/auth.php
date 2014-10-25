@@ -72,7 +72,7 @@ function log_in($authId, $ident, $pass){
 			
 		$result = mysql_query($query, $conn);
 		
-		// If no diver exists, return 0
+		// If no coach exists, return 0
 		if (mysql_fetch_row($result)[0] == '0') {
 			return 0;
 		}		
@@ -112,6 +112,8 @@ function diver_load_info() {
 	if ($_SESSION['dive_trainer']['userId'] == NULL || $_SESSION['dive_trainer']['userId'] == '') {
 		return;
 	}
+	
+	$_SESSION['dive_trainer']['userType'] = 'diver';
 		
 	$conn = getConnection();
 	
@@ -138,7 +140,9 @@ function coach_load_info() {
 	if ($_SESSION['dive_trainer']['userId'] == NULL || $_SESSION['dive_trainer']['userId'] == '') {
 		return;
 	}
-		
+	
+	$_SESSION['dive_trainer']['userType'] = 'coach';
+	
 	$conn = getConnection();
 	
 	// Check if diver exists

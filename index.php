@@ -15,7 +15,7 @@
 			var input_data = {
 				method : "log_in",
 				ident : first_char,
-				authId : userId.substr(2),
+				authId : userId.substr(1),
 				pass : password
 			};
 
@@ -26,7 +26,9 @@
 						window.location = './admin/index.php';
 					}
 					else{
-						alert(data);
+						if (parseInt(data) == 0) {
+							alert("Username not found")
+						}
 					}
 				});			
 		}
