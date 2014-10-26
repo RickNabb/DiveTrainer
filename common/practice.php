@@ -10,17 +10,33 @@
 * (C) Nick Rabb 2014
 */
 
+///////////////////////////////////////////////////////////////////////////////
 // Includes & requires
+///////////////////////////////////////////////////////////////////////////////
 
 require_once('bootstrap.php');
 
+///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
+///////////////////////////////////////////////////////////////////////////////
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 	// Get the deisred method from the HTTP call
-	$method = $_PUT['method'];
+	$method = '';
+	if (isset($_PUT['method'])) {
+		$method = $_PUT['method'];
+	}
+	else if (isset($_POST['method'])) {
+		$method = $_POST['method'];
+	}
+	else if (isset($_GET['method'])) {
+		$method = $_GET['method'];
+	}
 
+	/**
+	* Create practice method
+	**/
 	if($method == 'create_practice'){
 
 		$coachId = $_PUT['coachId'];
@@ -31,9 +47,23 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 		echo $result;
 	}
+	/**
+	* Get practice list method
+	**/
+	if($method == 'get_practice_list') {
+		$result = '';
+		session_start();
+		if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+			$result = get_coach_practices($_SESSION['dive_trainer']['userId']);
+		}
+		
+		echo json_encode($result);
+	}
 }
 
+///////////////////////////////////////////////////////////////////////////////
 // DATA METHODS
+///////////////////////////////////////////////////////////////////////////////
 
 /**
 * create_practice
@@ -49,6 +79,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 **/
 function create_practice($coachId, $title, $date){
 
+	// TODO: save exercises
 	$conn = getConnection();
 	$query = sprintf('INSERT INTO %s (coachId, title, "date")
 		VALUES ("%s", "%s", "%s")',
@@ -65,4 +96,32 @@ function create_practice($coachId, $title, $date){
 	return mysql_affected_rows($conn);
 }
 
+/**
+* get_practice_list
+*
+* Function to create a practice and insert into the database
+* @param int $coachId : ID of owning coach
+*
+* @return practiceArray - an array of practice rows
+**/
+function get_coach_practices($coachId){
+
+	$conn = getConnection();
+	$query = sprintf('SELECT practiceId, title, date FROM %s WHERE coachId = %s',
+		mysql_real_escape_string(PRACTICES_TABLE),
+		mysql_real_escape_string($coachId));
+
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error retrieving practices";
+		throw new Exception($message);
+	}
+	
+	$rows = array();
+	while(($row =  mysql_fetch_assoc($result))) {
+		$rows[] = $row;
+	}
+
+	return $rows;
+}
 ?>
