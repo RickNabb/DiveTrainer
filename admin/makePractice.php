@@ -5,34 +5,33 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php include("include.php"); 
-		require_once("./bootstrap.php");
-		session_start(); ?>
+		require_once("./bootstrap.php"); ?>
 
 	<script>
 
 		function create_practice(){
-			var coach_id = <?php echo $_SESSION['dive_trainer']['coachId']; ?>; // TODO: Change this to a dynamic value!
+			var coach_id = <?php if(session_id() == null) { session_start(); }
+								echo $_SESSION['dive_trainer']['userId']; ?>; 
+			
 			var date_month = $("#date_month").val();
-			var months = {"Jan": '01', "Feb": "02", "Mar": "03", "Apr":"04", "May": "05",
-				"Jun":"06", "Jul":"07", "Aug":"08", "Sep":"09", "Oct":"10", "Nov":"11", "Dec":"12"};
-			var date_month_num = months.date_month;
-			var date_full = date_month_num + "/" + $("#date_day").val() + "/" + $("#date_year").val();
-
-			var input_data = {
-				coachId : coach_id,
-				title : $("#input_title").val(),
-				date : date_full
-			};
-
-			$.post({
+			var months = {"Jan":"01", "Feb":"02", "Mar":"03", "Apr":"04", "May": "05", "Jun":"06", "Jul":"07", "Aug":"08", "Sep":"09", "Oct":"10", "Nov":"11", "Dec":"12"};
+			var date_month_num = months[date_month];
+			var date_full = $("#date_year").val() + '-' + date_month_num + "-" + $("#date_day").val();
+			
+			$.ajax({
+				type: "POST",
 				url: "../common/practice.php",
-				data: input_data,
-				success: function(data){
+				data: { method : "create_practice",
+						coachId : coach_id,
+						title : $("#input_title").val(),
+						date : date_full },
+				dataType: "text"
+				}).success(function(data) {
 					if(data > 0){
 						window.location = "./practices.php?success=true";
 					}
 				}
-			});
+			);
 		}
 
 		function add_skills(section){
@@ -53,7 +52,7 @@
 	<div class="topNav">
 		<div class="row blue">
 			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, Cliff!</h4>
+				<h4 class="white ptsans">Welcome, <?php echo $_SESSION["dive_trainer"]["fname"] ?>!</h4>
 			</div>
 		</div>
 
@@ -83,7 +82,7 @@
 		        			// TEMPORARY IMPLEMENTATION : USE SKILLS.PHP FOR THIS
 
 		        			$conn = getConnection();
-		        			$query = "SELECT * FROM " . SKILLS_TABLE;
+		        			$query = "SELECT * FROM " . EXERCISES_TABLE;
 		        			$result = mysql_query($query, $conn);
 
 		        			while($row = mysql_fetch_assoc($result)){

@@ -10,6 +10,7 @@
 	
 		$( document ).ready( loadPractices );
 		
+		// Gets the practice list for this coachId
 		function loadPractices() {		
 			$.ajax({
 				type: "POST",
@@ -20,6 +21,7 @@
 					
 					var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
+					// No practices found
 					if (result.length == 0) {
 						$( "#filter" ).after(
 						"<div class='row row-offset-md'>" +
@@ -30,6 +32,7 @@
 						"</div>");
 					}
 					
+					// Make a row for each practice
 					for (var i = 0; i < result.length; i++) {
 						var d = new Date(result[i].date);
 						var date = months[d.getUTCMonth()] + " " + d.getUTCDate() + ", " + d.getUTCFullYear();
@@ -37,12 +40,16 @@
 						"<div class='row'>" +
 							"<div class='adminHomeItem'>" +
 								"<h3>" + date + "</h3>" +
-								"<span class='glyphicon glyphicon-chevron-right'></span>" +
+								"<span class='glyphicon glyphicon-chevron-right' onclick=\"loadPractice(" + result[i].practiceId + ");\"></span>" +
 							"</div>" +
 						"</div>");
 					}
 			});
-			
+		}
+		
+		// Navigates to the view page for a specific practice
+		function loadPractice(practiceId) {
+			window.location = "viewPractice.php?practiceId=" + practiceId;
 		}
 	
 	</script>

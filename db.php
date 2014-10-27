@@ -1,11 +1,14 @@
 <?php
 
-
+// Entity tables
 define('DIVERS_TABLE', 'divers');
 define('COACHES_TABLE', 'coaches');
 define('PRACTICES_TABLE', 'practices');
-define('SKILLS_TABLE', 'skills');
+define('EXERCISES_TABLE', 'exercises');
 define('GOALS_TABLE', 'goals');
+
+// Relation tables
+define('EXERCISE_TO_PRACTICE_TABLE', 'exercisetopractice');
 
 function getConnection(){
 
