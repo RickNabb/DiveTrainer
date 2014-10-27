@@ -118,7 +118,7 @@ function create_practice($coachId, $title, $date, $exercises) {
 		$query = sprintf('INSERT INTO %s (exerciseId, practiceId)
 			VALUES ("%s", "%s")',
 			mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
-			mysql_real_escape_string($exercise['exerciseId']),
+			mysql_real_escape_string($exercise),
 			mysql_real_escape_string($practiceId));
 			
 		$result = mysql_query($query,$conn);

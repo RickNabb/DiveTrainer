@@ -8,8 +8,31 @@
 		require_once("./bootstrap.php"); ?>
 
 	<script>
-
-		function create_practice(){
+		$(document).ready(load_exercises);
+	
+		function load_exercises() {
+			var types = ["skills", "warmups", "conditioning", "flexibility"];
+			
+			for (var j = 0; j < types.length; j++) {
+				$.ajax({
+					type: "POST",
+					url: "../common/exercise.php",
+					data: { method : "get_" + types[j] },
+					dataType: "json"
+					}).success(function(data) {
+						for (var i = 0; i < data.exercises.length; i++) {
+							$("#" + data.type + "_form").append('<div class="row">' +
+									'<div class="col-sm-offset-1 col-xs-offset-1">' +
+											'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name + " level " + data.exercises[i].level + '</input>' +
+										'</div>' +
+									'</div>');
+						}
+					}
+				);
+			}
+		}
+	
+		function create_practice() {
 			var coach_id = <?php if(session_id() == null) { session_start(); }
 								echo $_SESSION['dive_trainer']['userId']; ?>; 
 			
@@ -18,13 +41,21 @@
 			var date_month_num = months[date_month];
 			var date_full = $("#date_year").val() + '-' + date_month_num + "-" + $("#date_day").val();
 			
+			// Get exercises
+			var exercises = [];
+			var inputs = $("button[id^='exercise']")
+			for (var i = 0; i < inputs.length; i++) {
+				exercises[i] = inputs[i].id.replace("exercise", "");
+			}
+			
 			$.ajax({
 				type: "POST",
 				url: "../common/practice.php",
 				data: { method : "create_practice",
 						coachId : coach_id,
 						title : $("#input_title").val(),
-						date : date_full },
+						date : date_full,
+						exercises : exercises },
 				dataType: "text"
 				}).success(function(data) {
 					if(data > 0){
@@ -34,14 +65,14 @@
 			);
 		}
 
-		function add_skills(section){
+		function add_skills(section) {
 
 			$("#" + section + "_skill_list").empty();
 
-			$("div.modal-body input").each(function(){
+			$("#" + section + "_form :input").each(function(){
 				if(this.checked){
-					$("#skill_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-1'>"+
-						"<button class='btn btn-default'>" + this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></div></div></div>");
+					$("#" + section + "_skill_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-1'>"+
+						"<button id='exercise" + this.id + "' class='btn btn-default'>" + this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button></div></div>");
 				}
 			});
 		}
@@ -68,45 +99,38 @@
 
 	<div class="container container-fluid">
 
-		<!-- Skills Modal -->
-		<div class="modal fade" id="skillsModal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
-		    <div class="modal-dialog">
-		        <div class="modal-content">
-		        	<div class="modal-header">
-			          	<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-			            <h4 class="modal-title" id="skillsModalLabel">Select Skills</h4>
-		        	</div>
-		        	<div class="modal-body">
-		        		<form>
-		        		<?php
-		        			// TEMPORARY IMPLEMENTATION : USE SKILLS.PHP FOR THIS
-
-		        			$conn = getConnection();
-		        			$query = "SELECT * FROM " . EXERCISES_TABLE;
-		        			$result = mysql_query($query, $conn);
-
-		        			while($row = mysql_fetch_assoc($result)){
-
-		        				echo '<div class="row">';
-		        				echo '<div class="col-sm-offset-1 col-xs-offset-1">';
-		        				echo '<input type="checkbox" value="'
-		        					. $row['name'] . ' ' . $row['level'] . '">&nbsp;' 
-		        					. $row['name'] . " level " . $row['level'] . '</input>';
-		        				echo '</div></div>';
-		        			}
-		        		?>
-		        		</form>
-		        	</div>
-		        	<div class="modal-footer">
-		        		<button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-		      	    	<button type="button" class="btn btn-primary" onclick="add_skills();" data-dismiss="modal">Add Skills</button>
-		        	</div>
-		        </div><!-- /.modal-content -->
-		    </div><!-- /.modal-dialog -->
-		</div><!-- /.modal -->
-
+		<!-- Exercises Modals -->
+		
+		<?php
+		$types = array("warmup", "skill", "conditioning", "flexibility");
+		
+		foreach ($types as $type) {
+			echo '<div class="modal fade" id="' . $type . 'Modal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+							<h4 class="modal-title" id="skillsModalLabel">Select Exercises</h4>
+						</div>
+						<div class="modal-body">
+							<form id="' . $type . '_form" name="' . $type . '_form">
+							</form>
+						</div>
+						<div class="modal-footer"><button class="btn btn-default" data-dismiss="modal">Cancel</button>
+							<button type="button" class="btn btn-primary" onclick="add_skills(\'' . $type . '\');" data-dismiss="modal">Add Exercises</button>
+						</div>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
+			
+			';
+		}
+		?>
+			
+			
 		<div class="nav-offset"></div>
 
+		<!-- Date -->
 		<div class="row row-offset-sm">
 			<label for="date_month" class="formLabel col-sm-offset-1 col-xs-offset-1">Select a Date</label><br />
 			<select id="date_month" class="col-sm-offset-1 col-xs-offset-1 form-control"
@@ -128,6 +152,7 @@
 			</select>
 		</div>
 
+		<!-- Title -->
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1">
 				<label for="date_month" class="formLabel">Title</label><br />
@@ -135,89 +160,34 @@
 			</div>
 		</div>
 
-		<!-- Warm Up Section -->
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4>Warm Up</h4>
-				<hr />
+		<?php
+		$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
+		$types = array("warmup", "skill", "conditioning", "flexibility");
+		
+		for ($i = 0; $i < count($titles); $i++) {
+			echo '<!-- ' . $titles[$i] . ' Section -->
+			
+			<div class="row row-offset-sm">
+				<div class="col-sm-offset-1 col-xs-offset-1">
+					<h4>' . $titles[$i] . '</h4>
+				</div>
 			</div>
-		</div>
 
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<label for="date_month" class="formLabel">Exercises</label><br />
-				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
-				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
+			<div id="' . $types[$i] . '_skill_list"></div>
+			
+			<div class="row row-offset-sm">
+				<div class="col-sm-offset-1 col-xs-offset-1">
+					<button class="btn btn-success" data-toggle="modal" data-target="#' . $types[$i] . 'Modal">Add Exercise
+					<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
+				</div>
 			</div>
-		</div>
 
-		<div id="warmup_skill_list"></div>
+			<!-- End ' . $titles[$i] . ' Section -->
+			
+			';
+		}
 
-		<!-- End Warm Up Section -->
-
-		<!-- Skills Section -->
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4>Skills</h4>
-				<hr />
-			</div>
-		</div>
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<label for="date_month" class="formLabel">Exercises</label><br />
-				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
-				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
-			</div>
-		</div>
-
-		<div id="skills_skill_list"></div>
-
-		<!-- End Skills Section -->
-
-		<!-- Conditioning Section -->
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4>Conditioning</h4>
-				<hr />
-			</div>
-		</div>
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<label for="date_month" class="formLabel">Exercises</label><br />
-				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
-				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
-			</div>
-		</div>
-
-		<div id="conditioning_skill_list"></div>
-
-		<!-- End Conditioning Section -->
-
-		<!-- Flexibility Section -->
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4>Flexibility</h4>
-				<hr />
-			</div>
-		</div>
-
-		<div class="row row-offset-sm">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<label for="date_month" class="formLabel">Exercises</label><br />
-				<button class="btn btn-success" data-toggle="modal" data-target="#skillsModal">Add Exercise
-				<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
-			</div>
-		</div>
-
-		<div id="flexibility_skill_list"></div>
-
-		<!-- End Flexibility Section -->
+		?>
 
 		<div class="row row-offset-md">
 			<div class="col-sm-offset-9 col-xs-offset-9">

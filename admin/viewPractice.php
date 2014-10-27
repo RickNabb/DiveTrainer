@@ -41,6 +41,11 @@
 			if (practice == 0)
 				return;
 
+			exerciseIds = [];
+			for (var i = 0; i < practice.exercises.length; i++) {
+				exerciseIds[i] = practice.exercises[i].exerciseId;
+			}
+				
 			$.ajax({
 				type: "POST",
 				url: "../common/practice.php",
@@ -48,7 +53,7 @@
 						coachId : practice.practice.coachId,
 						title : practice.practice.title,
 						date :  practice.practice.date, 
-						exercises : practice.exercises },
+						exercises : exerciseIds },
 				dataType: "text"
 				}).success(function(data) {
 					if(data > 0){

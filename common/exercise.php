@@ -53,9 +53,37 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	else if($method == 'get_exercise') {
 		$result = '';
 		if (isset($_POST['exerciseId'])) {
-			$result = get_practice($_POST['exerciseId']);
+			$result = get_exercise($_POST['exerciseId']);
 		}
 		
+		echo json_encode($result);
+	}
+	/**
+	* Get skills method
+	**/
+	else if($method == 'get_skills') {
+		$result = get_exercise_type('skill');
+		echo json_encode($result);
+	}
+	/**
+	* Get warmups method
+	**/
+	else if($method == 'get_warmups') {
+		$result = get_exercise_type('warmup');
+		echo json_encode($result);
+	}
+	/**
+	* Get conditioning method
+	**/
+	else if($method == 'get_conditioning') {
+		$result = get_exercise_type('conditioning');
+		echo json_encode($result);
+	}
+	/**
+	* Get flexibility method
+	**/
+	else if($method == 'get_flexibility') {
+		$result = get_exercise_type('flexibility');
 		echo json_encode($result);
 	}
 }
@@ -99,7 +127,7 @@ function create_exercise($name, $level, $type, $description) {
 /**
 * get_exercise
 *
-* Function to get a practice from the database
+* Function to get an exercise from the database
 * @param int $exerciseId : ID of the exercise
 *
 * @return exercise - the exercise object
@@ -120,5 +148,37 @@ function get_exercise($exerciseId) {
 	}
 
 	return mysql_fetch_assoc($exercise);
+}
+
+/**
+* get_exercise_type
+*
+* Function to get a list of exercises from the database based on type
+* @param string $type : the type of exercise
+*
+* @return result - the list of exercises with the given type
+**/
+function get_exercise_type($type) {
+	$conn = getConnection();
+	
+	// Get exercise info
+	$query = sprintf('SELECT * FROM %s WHERE type = \'%s\'',
+		mysql_real_escape_string(EXERCISES_TABLE),
+		mysql_real_escape_string($type));
+		
+	$exercises = mysql_query($query,$conn);
+	
+	if(!$exercises){
+		$message = "Error retrieving exercise";
+		throw new Exception($message);
+	}
+
+	$result = array();
+	
+	while ($e = mysql_fetch_assoc($exercises)) {
+		$result[] = $e;
+	}
+	
+	return array('exercises' => $result, 'type' => $type);
 }
 ?>
