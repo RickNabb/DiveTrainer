@@ -13,12 +13,12 @@
 		
 		var practice = 0;
 		
-		function load_practice(){
-			//TODO: perhaps use session instead of query string?
+		// Loads the contents of the practice from the database to the page
+		function load_practice() {
 			var practiceId = <?php echo $_GET['practiceId']; ?>;
 			
 			$.ajax({
-				type: "POST",
+				type: "GET",
 				url: "../common/practice.php",
 				data: { method: "get_practice", practiceId: practiceId },
 				dataType: "json"
@@ -37,6 +37,7 @@
 				});
 		}
 		
+		// Creates a new practice with the same content as this one and returns to practices screen
 		function clone_practice(){
 			if (practice == 0)
 				return;
@@ -62,6 +63,11 @@
 				});
 		}
 
+		// Navigates to the view page for a specific practice
+		function edit_practice() {
+			window.location = "editPractice.php?practiceId=" + practice.practice.practiceId;
+		}
+		
 	</script>
 </head>
 <body>
@@ -81,6 +87,9 @@
 			</div>
 			<div class="pull-right">
 				<span class="glyphicon glyphicon-plus-sign addButton fgGreen" onclick="clone_practice();"></span>
+			</div>
+			<div class="pull-left">
+				<button class="btn btn-default" onclick="edit_practice();">Edit</button>
 			</div>
 		</nav>
 	</div>	

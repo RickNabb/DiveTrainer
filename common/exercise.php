@@ -20,18 +20,12 @@ require_once('bootstrap.php');
 // HTTP METHODS
 ///////////////////////////////////////////////////////////////////////////////
 
-if($_SERVER['REQUEST_METHOD'] == 'POST'){
+$method = '';
+if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 	// Get the deisred method from the HTTP call
-	$method = '';
-	if (isset($_PUT['method'])) {
-		$method = $_PUT['method'];
-	}
-	else if (isset($_POST['method'])) {
+	if (isset($_POST['method'])) {
 		$method = $_POST['method'];
-	}
-	else if (isset($_GET['method'])) {
-		$method = $_GET['method'];
 	}
 
 	/**
@@ -47,10 +41,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 		echo $result;
 	}
+}
+else if($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+	// Get the deisred method from the HTTP call
+	if (isset($_GET['method'])) {
+		$method = $_GET['method'];
+	}
+	
 	/**
 	* Get exercise method
 	**/
-	else if($method == 'get_exercise') {
+	if($method == 'get_exercise') {
 		$result = '';
 		if (isset($_POST['exerciseId'])) {
 			$result = get_exercise($_POST['exerciseId']);
@@ -59,16 +61,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		echo json_encode($result);
 	}
 	/**
-	* Get skills method
+	* Get skill method
 	**/
-	else if($method == 'get_skills') {
+	else if($method == 'get_skill') {
 		$result = get_exercise_type('skill');
 		echo json_encode($result);
 	}
 	/**
-	* Get warmups method
+	* Get warmup method
 	**/
-	else if($method == 'get_warmups') {
+	else if($method == 'get_warmup') {
 		$result = get_exercise_type('warmup');
 		echo json_encode($result);
 	}
@@ -179,6 +181,6 @@ function get_exercise_type($type) {
 		$result[] = $e;
 	}
 	
-	return array('exercises' => $result, 'type' => $type);
+	return array('exercises' => $result, 'type' => $type,);
 }
 ?>

@@ -13,7 +13,7 @@
 		// Gets the practice list for this coachId
 		function loadPractices() {		
 			$.ajax({
-				type: "POST",
+				type: "GET",
 				url: "../common/practice.php",
 				data: { method: "get_practice_list" },
 				dataType: "json"

@@ -21,18 +21,12 @@ require_once('exercise.php');
 // HTTP METHODS
 ///////////////////////////////////////////////////////////////////////////////
 
+$method = '';
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 	// Get the deisred method from the HTTP call
-	$method = '';
-	if (isset($_PUT['method'])) {
-		$method = $_PUT['method'];
-	}
-	else if (isset($_POST['method'])) {
+	if (isset($_POST['method'])) {
 		$method = $_POST['method'];
-	}
-	else if (isset($_GET['method'])) {
-		$method = $_GET['method'];
 	}
 
 	/**
@@ -52,9 +46,33 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		echo $result;
 	}
 	/**
+	* Update practice method
+	**/
+	else if($method == 'update_practice'){
+		$result = 0;
+		
+		if (isset($_POST['practiceId']) && isset($_POST['coachId']) && isset($_POST['title']) && isset($_POST['date'])) {
+			$exercises = array();
+			if (isset($_POST['exercises'])) {
+				$exercises = $_POST['exercises'];
+			}
+			$result = update_practice($_POST['practiceId'], $_POST['coachId'], $_POST['title'], $_POST['date'], $exercises);
+		}
+
+		echo $result;
+	}
+}
+else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+
+	// Get the deisred method from the HTTP call
+	if (isset($_GET['method'])) {
+		$method = $_GET['method'];
+	}
+	
+	/**
 	* Get practice list method
 	**/
-	else if($method == 'get_practice_list') {
+	if($method == 'get_practice_list') {
 		$result = '';
 		session_start();
 		if ($_SESSION['dive_trainer']['userType'] == 'coach') {
@@ -72,8 +90,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	**/
 	else if($method == 'get_practice') {
 		$result = '';
-		if (isset($_POST['practiceId'])) {
-			$result = get_practice($_POST['practiceId']);
+		if (isset($_GET['practiceId'])) {
+			$result = get_practice($_GET['practiceId']);
 		}
 		
 		echo json_encode($result);
@@ -91,6 +109,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 * @param int $coachId : ID of owning coach
 * @param string $title : Title of the practice
 * @param Date $date : Date object representing when the practice happens
+* @param array $exercises : array of ids of the exercises in this practice
 *
 * @return int n : Number of affected rows in the sql query
 * 	n >= 1 -> Insert worked, multiple rows affected
@@ -124,6 +143,66 @@ function create_practice($coachId, $title, $date, $exercises) {
 		$result = mysql_query($query,$conn);
 		if(!$result){
 			$message = "Error inserting exercise into database";
+			throw new Exception($message);
+		}
+	}
+
+	return mysql_affected_rows($conn);
+}
+
+/**
+* update_practice
+*
+* Function to update an existing practice in the database
+* @param int $practiceId : ID of the practice
+* @param int $coachId : ID of owning coach
+* @param string $title : Title of the practice
+* @param Date $date : Date object representing when the practice happens
+* @param array $exercises : array of ids of the exercises in this practice
+*
+* @return int n : Number of affected rows in the sql query
+* 	n >= 1 -> Insert worked, multiple rows affected
+*	n = 0 -> Insert failed, no rows affected
+**/
+function update_practice($practiceId, $coachId, $title, $date, $exercises) {
+
+	// Save practice fields
+	$conn = getConnection();
+	$query = sprintf('UPDATE %s SET coachId=%s, title="%s", date="%s" WHERE practiceId=%s',
+		mysql_real_escape_string(PRACTICES_TABLE),
+		mysql_real_escape_string($coachId),
+		mysql_real_escape_string($title),
+		mysql_real_escape_string($date),
+		mysql_real_escape_string($practiceId));
+
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error inserting practice into database";
+		throw new Exception($message);
+	}
+	
+	// Remove old exercises
+	$query = sprintf('DELETE FROM %s WHERE practiceId = %s',
+		mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
+		mysql_real_escape_string($practiceId));
+	
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error removing practice-exercises into database";
+		throw new Exception($message);
+	}
+	
+	// Save exercises
+	foreach ($exercises as $exercise) {
+		$query = sprintf('INSERT INTO %s (exerciseId, practiceId)
+			VALUES ("%s", "%s")',
+			mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
+			mysql_real_escape_string($exercise),
+			mysql_real_escape_string($practiceId));
+			
+		$result = mysql_query($query,$conn);
+		if(!$result){
+			$message = "Error inserting practice-exercise into database";
 			throw new Exception($message);
 		}
 	}

@@ -8,18 +8,23 @@
 		require_once("./bootstrap.php"); ?>
 
 	<script>
-		$(document).ready(load_exercises);
+		$(document).ready( load_exercises );
+		
+		var practice = 0;
+		var types = ["skill", "warmup", "conditioning", "flexibility"];
 	
+		// Function to load all the exercise types from the database as options
 		function load_exercises() {
-			var types = ["skill", "warmup", "conditioning", "flexibility"];
-			
+
 			for (var j = 0; j < types.length; j++) {
 				$.ajax({
 					type: "GET",
+					async: false,
 					url: "../common/exercise.php",
 					data: { method : "get_" + types[j] },
 					dataType: "json"
-				}).success(function(data) {
+				}).done(function(data) {
+				
 					for (var i = 0; i < data.exercises.length; i++) {
 						$("#" + data.type + "_form").append(
 							'<div class="row">' +
@@ -30,9 +35,48 @@
 					}
 				});
 			}
+			
+			load_practice();
 		}
 	
-		function create_practice() {
+		// Function to load the practice details from the database
+		function load_practice() {
+			var practiceId = <?php echo $_GET['practiceId']; ?>;
+			
+			$.ajax({
+				type: "GET",
+				url: "../common/practice.php",
+				data: { method: "get_practice", practiceId: practiceId },
+				dataType: "json"
+				}).success(function(data) {
+					practice = data;
+					
+					var months = new Array("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec");
+					
+					// Practice
+					date = new Date(data.practice.date);
+					$("#date_day").val(date.getUTCDate());
+					$("#date_month").val(months[date.getUTCMonth()]);
+					$("#date_year").val(date.getUTCFullYear());
+					$("#input_title").val(data.practice.title);
+					
+					// Exercises
+					var ids = "";
+					for (var i = 0; i < data.exercises.length; i++) {
+						ids += "#" + data.exercises[i].exerciseId + "\n";
+						var checkbox = $("#" + data.exercises[i].exerciseId);
+						checkbox.attr('checked', true);
+					}
+					
+					// Update exercise lists
+					for (var i = 0; i < types.length; i++) {
+						add_skills(types[i]);
+					}
+				});
+		}
+		
+		// Function to save the practice to the database
+		function update_practice() {
 			var coach_id = <?php if(session_id() == null) { session_start(); }
 								echo $_SESSION['dive_trainer']['userId']; ?>; 
 			
@@ -51,7 +95,8 @@
 			$.ajax({
 				type: "POST",
 				url: "../common/practice.php",
-				data: { method : "create_practice",
+				data: { method : "update_practice",
+						practiceId : practice.practice.practiceId,
 						coachId : coach_id,
 						title : $("#input_title").val(),
 						date : date_full,
@@ -61,10 +106,10 @@
 					if(data > 0){
 						window.location = "./practices.php?success=true";
 					}
-				}
-			);
+				});
 		}
 
+		// Function to add selected skills to the appropriate skill list
 		function add_skills(section) {
 
 			$("#" + section + "_skill_list").empty();
@@ -91,7 +136,7 @@
 			<div class="container-fluid">
 				<div class="navbar-header">
 					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					<p class="navbar-title-sm">Create Practice</p>
+					<p class="navbar-title-sm">Edit Practice</p>
 				</div>			
 			</div>
 		</nav>
@@ -126,7 +171,6 @@
 			';
 		}
 		?>
-			
 			
 		<div class="nav-offset"></div>
 
@@ -191,7 +235,7 @@
 
 		<div class="row row-offset-md">
 			<div class="col-sm-offset-9 col-xs-offset-9">
-				<button class="btn btn-default" onclick="create_practice();">Finish</button>
+				<button class="btn btn-default" onclick="update_practice();">Finish</button>
 			</div>
 		</div>
 
