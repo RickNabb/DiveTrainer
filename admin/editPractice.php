@@ -117,12 +117,25 @@
 			$("#" + section + "_form :input").each(function(){
 				if(this.checked){
 					$("#" + section + "_exercises_list > div").append("<button id='exercise" + this.id + "' class='btn btn-default'>" + 
-						this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button>");
+						this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;' onclick='remove_skill(" + '"' + section + '"' + ", " + '"' + this.value + '"' + ");'></span></button>");
 				}
 			});
 
 			if($("#" + section + "_exercises_list > div").children().size() == 0)
 				$("#" + section + "_exercises_list > div").append("<p>There is nothing here. Add an exercise!</p>");
+		}
+
+		// Remove a skill
+		function remove_skill(section, value){
+
+			var button = $("#" + section + "_exercises_list button:contains('" + value + "')");
+			$("#" + section + "_form input[id*='" + button[0].id.substring(8) + "']")[0].checked = false;
+			button.remove();
+
+			if($("#" + section + "_exercises_list > div").children().size() == 0){
+
+				$("#" + section + "_exercises_list > div").append("<p>There is nothing here. Add an exercise!</p>");
+			}
 		}
 
 	</script>
