@@ -275,7 +275,8 @@ function get_practice($practiceId) {
 	}
 
 	// No practice for that id found
-	if(($row = mysql_fetch_assoc($practice)) == null){
+	$practiceRow = mysql_fetch_assoc($practice);
+	if($practiceRow == null){
 		return array('practice' => []);	
 	}
 	
@@ -293,7 +294,7 @@ function get_practice($practiceId) {
 	}
 	
 	// Return a nonsequential with the practice row and exercises array
-	$result = array('practice' => mysql_fetch_assoc($practice),
+	$result = array('practice' => $practiceRow,
 					'exercises' => $exercises);
 
 	return $result;
