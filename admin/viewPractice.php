@@ -13,8 +13,8 @@
 		
 		var practice = 0;
 		
-		function load_practice(){
-			//TODO: perhaps use session instead of query string?
+		// Loads the contents of the practice from the database to the page
+		function load_practice() {
 			var practiceId = <?php echo $_GET['practiceId']; ?>;
 			
 			$.ajax({
@@ -28,7 +28,7 @@
 					// Practice
 					//TODO: format date better
 					var d = new Date(data.practice.date);
-					$("#date").text(d.getUTCMonth() + " - " + d.getUTCDate() + " - " + d.getUTCFullYear());
+					$("#date").text(d.getUTCMonth()+1 + " - " + d.getUTCDate() + " - " + d.getUTCFullYear());
 					$("#title").text(data.practice.title);
 					
 					// Exercises
@@ -38,10 +38,16 @@
 				});
 		}
 		
+		// Creates a new practice with the same content as this one and returns to practices screen
 		function clone_practice(){
 			if (practice == 0)
 				return;
 
+			exerciseIds = [];
+			for (var i = 0; i < practice.exercises.length; i++) {
+				exerciseIds[i] = practice.exercises[i].exerciseId;
+			}
+				
 			$.ajax({
 				type: "POST",
 				url: "../common/practice.php",
@@ -49,7 +55,7 @@
 						coachId : practice.practice.coachId,
 						title : practice.practice.title,
 						date :  practice.practice.date, 
-						exercises : practice.exercises },
+						exercises : exerciseIds },
 				dataType: "text"
 				}).success(function(data) {
 					if(data > 0){
@@ -88,7 +94,7 @@
 			<h4 id="date" class="formLabel col-sm-offset-1 col-xs-offset-1"></h4>
 		</div>
 		
-		<div class="row row-offset-sm">
+		<div class="row row-offset-sm" id="insertExercises">
 		</div>
 
 		<div class="ftr-offset"></div>
