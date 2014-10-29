@@ -96,6 +96,17 @@ else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		
 		echo json_encode($result);
 	}
+	/**
+	* Get practice by date method
+	**/
+	else if($method == 'get_practice_by_date'){
+		$result = '';
+		if (isset($_GET['date'])) {
+			$result = get_practice_by_date($_GET['date']);
+		}
+		
+		echo json_encode($result);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -247,6 +258,7 @@ function get_coach_practices($coachId) {
 *
 * @return practice - the practice and its exercises 
 *						(i.e. {"practice":practice, "exercises":exercises} )
+*				    - if no practice is found, array(practice => []) is returned
 **/
 function get_practice($practiceId) {
 	$conn = getConnection();
@@ -260,6 +272,11 @@ function get_practice($practiceId) {
 	if(!$practice){
 		$message = "Error retrieving practice";
 		throw new Exception($message);
+	}
+
+	// No practice for that id found
+	if(($row = mysql_fetch_assoc($practice)) == null){
+		return array('practice' => []);	
 	}
 	
 	// Get practice to exercise relations
@@ -281,4 +298,61 @@ function get_practice($practiceId) {
 
 	return $result;
 }
+
+/**
+* get_practice_by_date
+*
+* Function to get a practice from the database based on its date field
+* @param string dateString : String of the practice date
+*
+* @return practice - the practice and its exercises 
+*						(i.e. {"practice":practice, "exercises":exercises} )
+*				    - if no practice is found, array(practice => []) is returned
+**/
+function get_practice_by_date($dateString) {
+
+	$conn = getConnection();
+	
+	// Get practice info
+	$query = sprintf('SELECT * FROM %s WHERE date = "%s"',
+		mysql_real_escape_string(PRACTICES_TABLE),
+		mysql_real_escape_string($dateString));
+
+	$practice = mysql_query($query,$conn);
+	if(!$practice){
+		$message = "Error retrieving practice";
+		throw new Exception($message);
+	}
+
+	$practiceId = -1;
+	$practiceRow = mysql_fetch_assoc($practice);
+	if($practiceRow != null){
+		// Capture the id of the practice to associate with exercises
+		$practiceId = $practiceRow['practiceId'];
+	}
+	else{
+		// Return empty practice array
+		return array('practice' => []);
+	}
+
+	// Get practice to exercise relations
+	$query = sprintf('SELECT * FROM %s WHERE practiceId = %s',
+		mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
+		mysql_real_escape_string($practiceId));
+
+	$relation = mysql_query($query,$conn);
+	
+	// Get each exercise info
+	$exercises = array();
+	while(($row =  mysql_fetch_assoc($relation))) {
+		$exercises[] = get_exercise($row['exerciseId']);
+	}
+
+	// Return a nonsequential with the practice row and exercises array
+	$result = array('practice' => $practiceRow,
+					'exercises' => $exercises);
+
+	return $result;
+}
+
 ?>

@@ -61,6 +61,9 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET'){
 */
 function log_in($authId, $ident, $pass){
 
+	// TODO: Make logging in go through the actual auth table
+	// with hashing checks, etc.
+
 	$conn = getConnection();
 
 	if($ident == 'c'){		

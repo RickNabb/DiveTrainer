@@ -16,7 +16,7 @@
 // Includes & requires
 ///////////////////////////////////////////////////////////////////////////////
 
-require("bootstrap.php");
+require_once('bootstrap.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
@@ -85,6 +85,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	
 	// Print out result
 	echo $result;
+}
+else if($_SERVER['REQUEST_METHOD'] == "GET"){
+
+	$method = '';
+	if(isset($_GET['method'])){
+		$method = $_GET['method'];
+	}
+
+	if($method == 'get_all_divers'){
+		
+		$result = get_all_divers();
+		echo json_encode($result);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -193,5 +206,33 @@ function load_info() {
 	$_SESSION['dive_trainer']['fname'] = $result['fname'];
 	$_SESSION['dive_trainer']['lname'] = $result['lname'];
 	$_SESSION['dive_trainer']['coachId'] = $result['coachId'];
+}
+
+/**
+* get_all_divers
+*
+* Function to retrieve all diver information from the database
+*
+* @return array rows : An array of associative arrays containing relations
+* 					   of database columns to array entries.
+**/
+function get_all_divers(){
+
+	$conn = getConnection();
+	$query = sprintf("SELECT * FROM %s",
+		DIVERS_TABLE);
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error getting divers";
+		throw new Exception($message);
+	}
+
+	$rows = array();
+	while($row = mysql_fetch_assoc($result)){
+		$rows[] = $row;
+	}
+
+	return $rows;
 }
 ?>

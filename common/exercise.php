@@ -164,7 +164,7 @@ function get_exercise_type($type) {
 	$conn = getConnection();
 	
 	// Get exercise info
-	$query = sprintf('SELECT * FROM %s WHERE type = \'%s\'',
+	$query = sprintf("SELECT * FROM %s WHERE type = '%s'",
 		mysql_real_escape_string(EXERCISES_TABLE),
 		mysql_real_escape_string($type));
 		

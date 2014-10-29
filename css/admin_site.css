@@ -1,8 +1,26 @@
-.admin-bottom-nav li{
-	display: inline-block;
-	width: 24%;
-	border-right: 1px solid #ddd;
-	padding-top: 10px;
-	height: 70px;
-	color: #999;
+/** MOBILE **/
+
+@media all and (max-device-width: 380px) {
+
+	.admin-bottom-nav li{
+		display: inline-block;
+		width: 24%;
+		border-right: 1px solid #ddd;
+		padding-top: 10px;
+		height: 70px;
+		color: #999;
+	}
+}
+
+@media all and (max-device-width: 1025px) and (min-device-width: 380px), all and (max-width: 1025px) and (min-width: 380px){
+
+	/** LAYOUT STYLES **/
+
+	.admin-bottom-nav li{
+		display: inline-block;
+		width: 24%;
+		padding-top: 10px;
+		height: 70px;
+		color: #999;
+	}
 }

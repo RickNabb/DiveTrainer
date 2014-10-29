@@ -58,10 +58,9 @@
 
 	<?php include('../common/header.php'); echo_header('Coach'); ?>
 
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
-
-		<div class="nav-offset"></div>
 
 		<div id="filter" class="row">
 			<select style="margin-left: 10px; color: #21aeff; font-size: 20px; border:none;" 

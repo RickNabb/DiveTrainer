@@ -5,25 +5,44 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php include("include.php"); ?>
+
+	<script>
+
+		$( document ).ready(loadDivers);
+
+		function loadDivers(){
+
+			$.ajax({
+				type: "GET",
+				url: "../common/diver.php",
+				data: {
+					method: "get_all_divers"
+				},
+				dataType: "json"
+			}).success(function(data){
+
+				for(var i = 0; i < data.length; i++){
+					$("#diver_list").append("<div class='row'><div class='adminHomeItem'><h4>" + data[i].fname + " " + data[i].lname +
+						"</h4></div></div>");
+				}
+
+			}).error(function(data){
+
+				$("#diver_list").append('<div class="row">');
+				$("#diver_list > div").append('<div class="col-sm-offset-1 col-xs-offset-1">');
+				$("#diver_list > div > div").append('<h3>Sorry!</h3>');
+				$("#diver_list > div > div").append('<h4>We couldn\'t load all of the divers.' + 
+					' Please try again.</h4></div></div>');
+			});
+		}
+
+	</script>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, Cliff!</h4>
-			</div>
-		</div>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-					<p class="navbar-title">Coach</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
+	<?php include('../common/header.php'); echo_header('Coach'); ?>
 
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">	
 		<div class="row">
@@ -32,24 +51,8 @@
 			</div>
 		</div>
 
-		<?php
-			$conn = getConnection();
-			$query = sprintf("SELECT * FROM %s",
-				DIVERS_TABLE);
-
-			$result = mysql_query($query, $conn);
-			if(!$result){
-				$message = "Error finding divers";
-				throw new Exception($message);
-			}
-
-			while($row = mysql_fetch_assoc($result)){
-					echo '<div class="row">';
-					echo '<div class="adminHomeItem">';
-					echo "<h4>" . $row['fname'] . ' ' . $row['lname'] . "</h4></div></div>";
-			}
-
-		?>
+		<div id="diver_list">
+		</div>
 	</div>
 
 	<div class="admin-bottom-nav">

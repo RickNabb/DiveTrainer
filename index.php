@@ -27,6 +27,7 @@
 					}
 					else{
 						if (parseInt(data) == 0) {
+							// TODO: Form validation
 							alert("Username not found")
 						}
 					}
@@ -40,27 +41,29 @@
 	</script>
 </head>
 <body>
-	<div class="container container-fluid">
+	<div class="container-fluid">
 		<div class="row row-lg blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
+			<div class="col-sm-offset-1 col-xs-offset-1 col-md-offset-1 col-lg-offset-1">
 				<h1 class="white ptsans">Dive Trainer</h1>
 			</div>
 		</div>
 
 		<div class="row row-offset-md">
-			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-8 col-sm-8">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-offset-2 
+				col-xs-8 col-sm-8 col-md-8 col-lg-8">
 				<input type="text" class="form-control" placeholder="User ID" id="inputID"/>
 			</div>
 		</div>
 
 		<div class="row row-offset-sm">
-			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-8 col-sm-8">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-offset-2 
+				col-xs-8 col-sm-8 col-md-8 col-lg-8">
 				<input type="password" class="form-control" placeholder="password"  id="password" />
 			</div>
 		</div>
 
 		<div class="row row-offset-lg">
-			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-2 col-sm-2">
+			<div class="col-sm-offset-2 col-xs-offset-2 col-xs-2 col-sm-2 col-md-offset-3">
 				<input type="button" class="btn btn-default" value="Log In"
 					onclick="logIn();"/>
 			</div>

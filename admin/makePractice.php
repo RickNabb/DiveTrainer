@@ -4,8 +4,7 @@
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<?php include("include.php"); 
-		require_once("./bootstrap.php"); ?>
+	<?php include("include.php"); ?>
 
 	<script>
 		$(document).ready(load_exercises);
@@ -23,11 +22,13 @@
 					for (var i = 0; i < data.exercises.length; i++) {
 						$("#" + data.type + "_form").append(
 							'<div class="row">' +
-								'<div class="col-sm-offset-1 col-xs-offset-1">' +
+								'<div class="col-sm-offset-2 col-xs-offset-2">' +
 									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name + " level " + data.exercises[i].level + '</input>' +
 								'</div>' +
 							'</div>');
 					}
+				}).error(function(data){
+					console.log(data);
 				});
 			}
 		}
@@ -67,39 +68,41 @@
 
 		function add_skills(section) {
 
-			$("#" + section + "_skill_list").empty();
+			$("#" + section + "_exercises_list").empty();
 
 			$("#" + section + "_form :input").each(function(){
 				if(this.checked){
-					$("#" + section + "_skill_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-1'>"+
-						"<button id='exercise" + this.id + "' class='btn btn-default'>" + this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button></div></div>");
+					$("#" + section + "_exercises_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-2'>"+
+						"<button id='exercise" + this.id + "' class='btn btn-default' onclick='remove_skill(" + '"' + section + '"' + ", " + '"'
+						 + this.value + '"' + ");'>" + this.value + 
+						"<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button></div></div>");
 				}
 			});
+		}
+
+		function remove_skill(section, value){
+
+			var button = $("#" + section + "_exercises_list button:contains('" + value + "')");
+			$("#" + section + "_form input[id*='" + button[0].id.substring(8) + "']")[0].checked = false;
+			button.remove();
+
+			if($("#" + section + "_exercises_list > div > div").children().size() == 0){
+
+				$("#" + section + "_exercises_list > div > div").append("<p>There is nothing here. Add an exercise!</p>");
+			}
 		}
 
 	</script>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php echo $_SESSION["dive_trainer"]["fname"] ?>!</h4>
-			</div>
-		</div>
+	
+	<?php include('../common/header.php'); echo_header('Create Practice', true, '-sm'); ?>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					<p class="navbar-title-sm">Create Practice</p>
-				</div>			
-			</div>
-		</nav>
-	</div>	
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
 
-		<!-- Exercises Modals -->
+		<!-- Exercises Modals --> <!-- TODO: Use one modal and dynamically switch content (?) -->
 		
 		<?php
 		$types = array("warmup", "skill", "conditioning", "flexibility");
@@ -126,11 +129,7 @@
 			';
 		}
 		?>
-			
-			
-		<div class="nav-offset"></div>
 
-		<!-- Date -->
 		<div class="row row-offset-sm">
 			<label for="date_month" class="formLabel col-sm-offset-1 col-xs-offset-1">Select a Date</label><br />
 			<select id="date_month" class="col-sm-offset-1 col-xs-offset-1 form-control"
@@ -152,7 +151,6 @@
 			</select>
 		</div>
 
-		<!-- Title -->
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1">
 				<label for="date_month" class="formLabel">Title</label><br />
@@ -161,31 +159,30 @@
 		</div>
 
 		<?php
-		$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
-		$types = array("warmup", "skill", "conditioning", "flexibility");
-		
-		for ($i = 0; $i < count($titles); $i++) {
-			echo '<!-- ' . $titles[$i] . ' Section -->
+			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
+			$types = array("warmup", "skill", "conditioning", "flexibility");
 			
-			<div class="row row-offset-sm">
-				<div class="col-sm-offset-1 col-xs-offset-1">
-					<h4>' . $titles[$i] . '</h4>
-				</div>
-			</div>
-
-			<div id="' . $types[$i] . '_skill_list"></div>
-			
-			<div class="row row-offset-sm">
-				<div class="col-sm-offset-1 col-xs-offset-1">
-					<button class="btn btn-success" data-toggle="modal" data-target="#' . $types[$i] . 'Modal">Add Exercise
-					<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
-				</div>
-			</div>
-
-			<!-- End ' . $titles[$i] . ' Section -->
-			
-			';
-		}
+			for ($i = 0; $i < count($titles); $i++) {
+				echo '<!-- ' . $titles[$i] . ' Section -->
+						<div class="row row-offset-sm">
+							<div class="col-sm-offset-1 col-xs-offset-1 col-sm-4 col-xs-4">
+								<h4>' . $titles[$i] . '</h4>
+							</div>
+							<div class="col-sm-offset-9 col-xs-offset-9">
+								<span class="glyphicon glyphicon-plus-sign addButtonSm fgGreen" style="padding-top: 10px;"
+									data-toggle="modal" data-target="#' . $types[$i] . 'Modal"></span>
+							</div>
+							<div class="col-sm-offset-1 col-xs-offset-1">
+								<hr />
+							</div>
+						</div>
+						<div id="' . $types[$i] . '_exercises_list" class="row">
+							<div class="col-sm-offset-1 col-xs-offset-2">
+								<p>There is nothing here. Add an exercise!</p>
+							</div>
+						</div>
+						<!-- End ' . $titles[$i] . ' Section -->';
+			}
 
 		?>
 

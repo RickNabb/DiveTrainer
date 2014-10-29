@@ -112,35 +112,26 @@
 		// Function to add selected skills to the appropriate skill list
 		function add_skills(section) {
 
-			$("#" + section + "_skill_list").empty();
+			$("#" + section + "_exercises_list > div").empty();
 
 			$("#" + section + "_form :input").each(function(){
 				if(this.checked){
-					$("#" + section + "_skill_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-1'>"+
-						"<button id='exercise" + this.id + "' class='btn btn-default'>" + this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button></div></div>");
+					$("#" + section + "_exercises_list > div").append("<button id='exercise" + this.id + "' class='btn btn-default'>" + 
+						this.value + "<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button>");
 				}
 			});
+
+			if($("#" + section + "_exercises_list > div").children().size() == 0)
+				$("#" + section + "_exercises_list > div").append("<p>There is nothing here. Add an exercise!</p>");
 		}
 
 	</script>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php echo $_SESSION["dive_trainer"]["fname"] ?>!</h4>
-			</div>
-		</div>
+	
+	<?php include('../common/header.php'); echo_header('Edit Practice', true, '-sm'); ?>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					<p class="navbar-title-sm">Edit Practice</p>
-				</div>			
-			</div>
-		</nav>
-	</div>	
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
 
@@ -171,8 +162,6 @@
 			';
 		}
 		?>
-			
-		<div class="nav-offset"></div>
 
 		<!-- Date -->
 		<div class="row row-offset-sm">
@@ -205,31 +194,30 @@
 		</div>
 
 		<?php
-		$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
-		$types = array("warmup", "skill", "conditioning", "flexibility");
-		
-		for ($i = 0; $i < count($titles); $i++) {
-			echo '<!-- ' . $titles[$i] . ' Section -->
+			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
+			$types = array("warmup", "skill", "conditioning", "flexibility");
 			
-			<div class="row row-offset-sm">
-				<div class="col-sm-offset-1 col-xs-offset-1">
-					<h4>' . $titles[$i] . '</h4>
-				</div>
-			</div>
-
-			<div id="' . $types[$i] . '_skill_list"></div>
-			
-			<div class="row row-offset-sm">
-				<div class="col-sm-offset-1 col-xs-offset-1">
-					<button class="btn btn-success" data-toggle="modal" data-target="#' . $types[$i] . 'Modal">Add Exercise
-					<span class="glyphicon glyphicon-plus-sign addButtonSm fgWhite" style="margin-left: 10px;"></span></button>
-				</div>
-			</div>
-
-			<!-- End ' . $titles[$i] . ' Section -->
-			
-			';
-		}
+			for ($i = 0; $i < count($titles); $i++) {
+				echo '<!-- ' . $titles[$i] . ' Section -->
+						<div class="row row-offset-sm">
+							<div class="col-sm-offset-1 col-xs-offset-1 col-sm-4 col-xs-4">
+								<h4>' . $titles[$i] . '</h4>
+							</div>
+							<div class="col-sm-offset-9 col-xs-offset-9">
+								<span class="glyphicon glyphicon-plus-sign addButtonSm fgGreen" style="padding-top: 10px;"
+									data-toggle="modal" data-target="#' . $types[$i] . 'Modal"></span>
+							</div>
+							<div class="col-sm-offset-1 col-xs-offset-1">
+								<hr />
+							</div>
+						</div>
+						<div id="' . $types[$i] . '_exercises_list" class="row">
+							<div class="col-sm-offset-1 col-xs-offset-2">
+								<p>There is nothing here. Add an exercise!</p>
+							</div>
+						</div>
+						<!-- End ' . $titles[$i] . ' Section -->';
+			}
 
 		?>
 

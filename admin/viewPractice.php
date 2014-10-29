@@ -13,8 +13,8 @@
 		
 		var practice = 0;
 		
-		// Loads the contents of the practice from the database to the page
-		function load_practice() {
+		function load_practice(){
+			//TODO: perhaps use session instead of query string?
 			var practiceId = <?php echo $_GET['practiceId']; ?>;
 			
 			$.ajax({
@@ -27,7 +27,8 @@
 					
 					// Practice
 					//TODO: format date better
-					$("#date").text(data.practice.date);
+					var d = new Date(data.practice.date);
+					$("#date").text(d.getUTCMonth() + " - " + d.getUTCDate() + " - " + d.getUTCFullYear());
 					$("#title").text(data.practice.title);
 					
 					// Exercises
@@ -37,16 +38,10 @@
 				});
 		}
 		
-		// Creates a new practice with the same content as this one and returns to practices screen
 		function clone_practice(){
 			if (practice == 0)
 				return;
 
-			exerciseIds = [];
-			for (var i = 0; i < practice.exercises.length; i++) {
-				exerciseIds[i] = practice.exercises[i].exerciseId;
-			}
-				
 			$.ajax({
 				type: "POST",
 				url: "../common/practice.php",
@@ -54,7 +49,7 @@
 						coachId : practice.practice.coachId,
 						title : practice.practice.title,
 						date :  practice.practice.date, 
-						exercises : exerciseIds },
+						exercises : practice.exercises },
 				dataType: "text"
 				}).success(function(data) {
 					if(data > 0){
@@ -67,48 +62,33 @@
 		function edit_practice() {
 			window.location = "editPractice.php?practiceId=" + practice.practice.practiceId;
 		}
-		
+
 	</script>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php echo $_SESSION["dive_trainer"]["fname"] ?>!</h4>
-			</div>
-		</div>
+	
+	<?php include('../common/header.php'); echo_header('View Practice', true, '-sm'); ?>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
-					<p class="navbar-title-sm">View Practice</p>
-				</div>			
-			</div>
-			<div class="pull-right">
-				<span class="glyphicon glyphicon-plus-sign addButton fgGreen" onclick="clone_practice();"></span>
-			</div>
-			<div class="pull-left">
-				<button class="btn btn-default" onclick="edit_practice();">Edit</button>
-			</div>
-		</nav>
-	</div>	
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
-		<div class="nav-offset"></div>
+
+		<div class="row">
+			<div class="pull-right">
+				<span class="glyphicon glyphicon-file addButton fgBlue" onclick="clone_practice();"></span>
+				<span class="glyphicon glyphicon-edit addButton fgOrange" onclick="edit_practice();"></span>
+			</div>
+		</div>
 
 		<div class="row row-offset-sm">
-			<label for="title" class="formLabel col-sm-offset-1 col-xs-offset-1">Title:</label>
-			<label id="title" class="formLabel col-sm-offset-1 col-xs-offset-1" />
+			<h3 id="title" class="col-sm-offset-1 col-xs-offset-1"></h3>
+		</div>
+		
+		<div class="row">
+			<h4 id="date" class="formLabel col-sm-offset-1 col-xs-offset-1"></h4>
 		</div>
 		
 		<div class="row row-offset-sm">
-			<label for="date" class="formLabel col-sm-offset-1 col-xs-offset-1">Date:</label>
-			<label id="date" class="formLabel col-sm-offset-1 col-xs-offset-1" />
-		</div>
-		
-		<div class="row row-offset-sm">
-			<label id="exerciseLabel" class="formLabel col-sm-offset-1 col-xs-offset-1">Exercises:</label><br id="insertExercises">
 		</div>
 
 		<div class="ftr-offset"></div>

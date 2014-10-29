@@ -12,3 +12,5 @@ define('MYSQL_PASSWORD', '');
 define('MYSQL_DB', 'dive_trainer');
 
 require_once('../db.php');
+
+?>
