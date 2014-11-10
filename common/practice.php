@@ -16,6 +16,7 @@
 
 require_once('bootstrap.php');
 require_once('exercise.php');
+require_once('diver.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
@@ -52,11 +53,30 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		$result = 0;
 		
 		if (isset($_POST['practiceId']) && isset($_POST['coachId']) && isset($_POST['title']) && isset($_POST['date'])) {
+		
 			$exercises = array();
 			if (isset($_POST['exercises'])) {
 				$exercises = $_POST['exercises'];
 			}
+			
 			$result = update_practice($_POST['practiceId'], $_POST['coachId'], $_POST['title'], $_POST['date'], $exercises);
+		}
+
+		echo $result;
+	}
+	/**
+	* Update attendance method
+	**/
+	else if($method == 'update_attendance'){
+		$result = 0;
+		
+		if (isset($_POST['practiceId'])) {
+			$divers = array();
+			if (isset($_POST['divers'])) {
+				$divers = $_POST['divers'];
+			}
+			
+			$result = update_attendance($_POST['practiceId'], $divers);
 		}
 
 		echo $result;
@@ -158,6 +178,49 @@ function create_practice($coachId, $title, $date, $exercises) {
 		}
 	}
 
+	return mysql_affected_rows($conn);
+}
+
+/**
+* update_attendance
+*
+* Function to update an existing practice in the database
+* @param int $practiceId : ID of the practice
+* @param array $divers : array of ids of the divers in this practice and their attendance
+*
+* @return int n : Number of affected rows in the sql query
+* 	n >= 1 -> Insert worked, multiple rows affected
+*	n = 0 -> Insert failed, no rows affected
+**/
+function update_attendance($practiceId, $divers) {
+	$conn = getConnection();
+	
+	// Remove old divers
+	$query = sprintf('DELETE FROM %s WHERE practiceId = %s',
+		mysql_real_escape_string(DIVER_TO_PRACTICE_TABLE),
+		mysql_real_escape_string($practiceId));
+	
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error removing practice-divers into database";
+		throw new Exception($message);
+	}
+	
+	// Save divers
+	foreach ($divers as $diver) {
+		$query = sprintf('INSERT INTO %s (diverId, practiceId, attended) VALUES ("%s", "%s", "%s")',
+			mysql_real_escape_string(DIVER_TO_PRACTICE_TABLE),
+			mysql_real_escape_string($diver['diverId']),
+			mysql_real_escape_string($practiceId),
+			mysql_real_escape_string($diver['attended']));
+			
+		$result = mysql_query($query,$conn);
+		if(!$result){
+			echo $query;
+			$message = "Error inserting practice-diver into database";
+			throw new Exception($message);
+		}
+	}
 	return mysql_affected_rows($conn);
 }
 
@@ -280,22 +343,16 @@ function get_practice($practiceId) {
 		return array('practice' => []);	
 	}
 	
-	// Get practice to exercise relations
-	$query = sprintf('SELECT * FROM %s WHERE practiceId = %s',
-		mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
-		mysql_real_escape_string($practiceId));
-
-	$relation = mysql_query($query,$conn);
-	
 	// Get each exercise info
-	$exercises = array();
-	while(($row =  mysql_fetch_assoc($relation))) {
-		$exercises[] = get_exercise($row['exerciseId']);
-	}
+	$exercises = get_exercises($practiceId, $conn);
 	
+	// Get each divers info
+	$divers = get_attendance($practiceId, $conn);
+
 	// Return a nonsequential with the practice row and exercises array
 	$result = array('practice' => $practiceRow,
-					'exercises' => $exercises);
+					'exercises' => $exercises,
+					'divers' => $divers);
 
 	return $result;
 }
@@ -327,15 +384,38 @@ function get_practice_by_date($dateString) {
 
 	$practiceId = -1;
 	$practiceRow = mysql_fetch_assoc($practice);
-	if($practiceRow != null){
+	if($practiceRow != null) {
 		// Capture the id of the practice to associate with exercises
 		$practiceId = $practiceRow['practiceId'];
 	}
-	else{
+	else {
 		// Return empty practice array
 		return array('practice' => []);
 	}
+	
+	// Get each exercise info
+	$exercises = get_exercises($practiceId);
+	
+	// Get each divers info
+	$divers = get_attendance($practiceId);
 
+	// Return a nonsequential with the practice row and exercises array
+	$result = array('practice' => $practiceRow,
+					'exercises' => $exercises,
+					'divers' => $divers);
+
+	return $result;
+}
+
+/**
+* get_exercises
+*
+* Function to get a exercises related to a practice
+* @param int practiceId : the id of the related practice
+*
+* @return exercises - the list of exercises
+**/
+function get_exercises($practiceId, $conn) {
 	// Get practice to exercise relations
 	$query = sprintf('SELECT * FROM %s WHERE practiceId = %s',
 		mysql_real_escape_string(EXERCISE_TO_PRACTICE_TABLE),
@@ -345,15 +425,37 @@ function get_practice_by_date($dateString) {
 	
 	// Get each exercise info
 	$exercises = array();
-	while(($row =  mysql_fetch_assoc($relation))) {
+	while($row =  mysql_fetch_assoc($relation)) {
 		$exercises[] = get_exercise($row['exerciseId']);
 	}
-
-	// Return a nonsequential with the practice row and exercises array
-	$result = array('practice' => $practiceRow,
-					'exercises' => $exercises);
-
-	return $result;
+	
+	return $exercises;
 }
 
+/**
+* get_divers
+*
+* Function to get a exercises related to a practice
+* @param int practiceId : the id of the related practice
+*
+* @return divers - the list of exercises
+**/
+function get_attendance($practiceId, $conn) {
+	// Get practice to exercise relations
+	$query = sprintf('SELECT * FROM %s WHERE practiceId = %s',
+		mysql_real_escape_string(DIVER_TO_PRACTICE_TABLE),
+		mysql_real_escape_string($practiceId));
+
+	$relation = mysql_query($query,$conn);
+	
+	// Get each exercise info
+	$divers = array();
+	while($row =  mysql_fetch_assoc($relation)) {
+		$diver = get_diver($row['diverId']);
+		$diver['attended'] = $row['attended'];
+		$divers[] = $diver;
+	}
+	
+	return $divers;
+}
 ?>

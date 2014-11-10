@@ -61,9 +61,7 @@
 					$("#input_title").val(data.practice.title);
 					
 					// Exercises
-					var ids = "";
 					for (var i = 0; i < data.exercises.length; i++) {
-						ids += "#" + data.exercises[i].exerciseId + "\n";
 						var checkbox = $("#" + data.exercises[i].exerciseId);
 						checkbox.attr('checked', true);
 					}

@@ -79,9 +79,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$result = '';
 		}
 	}
-	else {
-		$result = 'Invalid function call';
-	}
+	
 	
 	// Print out result
 	echo $result;
@@ -93,9 +91,12 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 		$method = $_GET['method'];
 	}
 
-	if($method == 'get_all_divers'){
-		
+	if($method == 'get_all_divers') {
 		$result = get_all_divers();
+		echo json_encode($result);
+	}
+	else if($method == 'get_diver') {
+		$result = get_diver();
 		echo json_encode($result);
 	}
 }
@@ -206,6 +207,26 @@ function load_info() {
 	$_SESSION['dive_trainer']['fname'] = $result['fname'];
 	$_SESSION['dive_trainer']['lname'] = $result['lname'];
 	$_SESSION['dive_trainer']['coachId'] = $result['coachId'];
+}
+/**
+* get_diver
+*
+* Function to get a diver from the database
+* @param int $diverId : ID of the diver
+*
+* @return result - the diver object
+**/
+function get_diver($diverId) {		
+	$conn = getConnection();
+	
+	// Check if diver exists
+	$query = sprintf('SELECT * FROM %s WHERE diverId = %s',
+		mysql_real_escape_string(DIVERS_TABLE),
+		mysql_real_escape_string($diverId));
+		
+	$result = mysql_fetch_array(mysql_query($query, $conn));
+	
+	return $result;
 }
 
 /**
