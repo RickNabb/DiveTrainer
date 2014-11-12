@@ -174,13 +174,13 @@ function get_exercise_type($type) {
 		$message = "Error retrieving exercise";
 		throw new Exception($message);
 	}
-
+	
 	$result = array();
 	
 	while ($e = mysql_fetch_assoc($exercises)) {
 		$result[] = $e;
 	}
 	
-	return array('exercises' => $result, 'type' => $type,);
+	return array('exercises' => $result, 'type' => $type);
 }
 ?>

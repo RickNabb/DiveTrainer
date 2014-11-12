@@ -104,6 +104,13 @@
 		height: 100px;
 		padding-bottom: 10px;
 	}
+
+	.loader-btn{
+		height: 25px;
+		width: 25px;
+		margin-left: 10px;
+		display: none;
+	}
 }
 
 /** TABLET **/
@@ -275,6 +282,10 @@
 
 	.fgOrange{
 		color: #FF8D27;
+	}
+
+	.error{
+		color: red;
 	}
 
 	h1.white,h2.white,h3.white,h4.white,p.white{

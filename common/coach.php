@@ -39,7 +39,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	/**
 	* Load information method
 	**/
-	else if($_GET['method'] == 'get_coach' && isset($_GET['coachId'])) {
+	if($_GET['method'] == 'get_coach' && isset($_GET['coachId'])) {
 		$result = get_coach($_GET['coachId']);
 				
 		// Print out result
@@ -112,7 +112,7 @@ function get_coach($coachId) {
 	
 	// Get exercise info
 	$query = sprintf('SELECT * FROM %s WHERE coachId = %s',
-		mysql_real_escape_string(COACHS_TABLE),
+		mysql_real_escape_string(COACHES_TABLE),
 		mysql_real_escape_string($coachId));
 		
 	$coach = mysql_query($query,$conn);

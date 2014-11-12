@@ -7,6 +7,7 @@
 	<?php include("include.php"); ?>
 
 	<script>
+	
 		$(document).ready(load_exercises);
 	
 		function load_exercises() {
@@ -96,7 +97,7 @@
 </head>
 <body>
 	
-	<?php include('../common/header.php'); echo_header('Create Practice', true, '-sm'); ?>
+	<?php include('../common/header.php'); echo_header('Create Practice', true, './practices.php', '-sm'); ?>
 
 	<div class="nav-offset"></div>
 

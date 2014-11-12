@@ -8,10 +8,19 @@
 		include("include.php"); 
 		session_start(); 
 	?>
+
+	<script>
+
+		function load_goals(){
+
+			
+		}
+
+	</script>
 </head>
 <body>
 	
-	<?php include('header.php'); echo_header('Goals'); ?>
+	<?php include('../common/header.php'); echo_header('Goals'); ?>
 
 	<div class="container container-fluid">
 
@@ -27,8 +36,8 @@
 		<?php
 			$conn = getConnection();
 			$query = sprintf("SELECT * FROM %s WHERE diverId = %s", 
-			mysql_real_escape_string(GOALS_TABLE), 
-			mysql_real_escape_string($_SESSION['dive_trainer']['userId']));
+				mysql_real_escape_string(GOALS_TABLE), 
+				mysql_real_escape_string($_SESSION['dive_trainer']['userId']));
 
 			$result = mysql_query($query, $conn);
 			if(!$result){

@@ -23,7 +23,11 @@
 				input_data,
 				function(data, success){
 					if(parseInt(data) > 0){
-						window.location = './admin/index.php';
+
+						if(first_char == 'c')
+							window.location = './admin/index.php';
+						else if(first_char == 'd')
+							window.location = './diver/index.php';
 					}
 					else{
 						if (parseInt(data) == 0) {
@@ -47,6 +51,29 @@
 				<h1 class="white ptsans">Dive Trainer</h1>
 			</div>
 		</div>
+
+		<!-- Register success check -->
+		<?php if(isset($_GET['register']) && $_GET['register'] == 'success') { ?>
+		<div class="row row-offset-sm">
+			<div class="col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-12 col-md-11 col-lg-11">
+				<div class="alert alert-success">
+					<?php echo '<p>You have successfully been registered! A confirmation email has been sent to 
+							<strong>' . $_GET['email'] . '</strong></p>'; ?>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
+		<!-- Register failure check -->
+		<?php if(isset($_GET['register']) && $_GET['register'] == 'failure') { ?>
+		<div class="row row-offset-sm">
+			<div class="col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-12 col-md-11 col-lg-11">
+				<div class="alert alert-danger">
+					<?php echo '<p>Something went wrong with registration! Please try again later.</p>'; ?>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
 
 		<div class="row row-offset-md">
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-offset-2 

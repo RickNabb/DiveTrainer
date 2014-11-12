@@ -5,6 +5,7 @@
 	<meta name="viewport" content="width=device-width">
 
 	<?php include("include.php"); ?>
+	<?php //include("session_check.php"); ?>
 
 	<script>
 

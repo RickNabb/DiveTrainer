@@ -6,6 +6,7 @@ define('COACHES_TABLE', 'coaches');
 define('PRACTICES_TABLE', 'practices');
 define('EXERCISES_TABLE', 'exercises');
 define('GOALS_TABLE', 'goals');
+define('AUTH_TABLE', 'auth');
 
 // Relation tables
 define('EXERCISE_TO_PRACTICE_TABLE', 'exercisetopractice');

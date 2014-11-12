@@ -13,6 +13,12 @@
 //TODO: update mysql functions (deprecated)
 
 ///////////////////////////////////////////////////////////////////////////////
+// REQUIRES AND INCLUDES
+///////////////////////////////////////////////////////////////////////////////
+
+require_once('bootstrap.php');
+
+///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -26,14 +32,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	if($_POST['method'] == 'create_goal' && isset($_POST['diverId']) && 
 		isset($_POST['name']) && isset($_POST['startDate']) && isset($_POST['endDate'])) {
 		
-		$value = create_goal($_POST['diverId'], $_POST['name'], $_POST['startDate'], $_POST['endDate']);
+		$goalId = create_goal($_POST['diverId'], $_POST['name'], $_POST['startDate'], $_POST['endDate']);
 		
 		// If the insertion failed record error message in result
-		if ($value == '0') {
+		if ($goalId == '') {
 			$result = 'Creation failed, ensure all fields have proper values.';
 		}
 		else {
-			$result = '';
+			
+			$result = create_exercise_to_goal($goalId, $_POST['skills']);
+			echo ($result == 1 ? 'success' : 'failure');
 		}
 	}
 	else {
@@ -42,6 +50,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	
 	// Print out result
 	echo $result;
+}
+
+else if($_SERVER['REQUEST_METHOD'] == "GET"){
+
+	if(isset($_GET['method']) && $_GET['method'] == 'get_goals_for_diver'){
+
+		$diverId = $_GET['diverId'];
+		echo json_encode(get_goals_for_diver($diverId));
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -87,10 +104,57 @@ function create_goal($diverId, $name, $startDate_str, $endDate_str){
 	
 	// Insertion failed
 	if(!$result){
-		$message = "Error inserting practice into database";
+		$message = "Error inserting goal into database";
 		throw new Exception($message);
 	}
 
-	return mysql_affected_rows($conn);
+	return mysql_insert_id($conn);
 }
+
+function create_exercise_to_goal($goalId, $skills){
+
+	$conn = getConnection();
+
+	foreach($skills as $exerciseId => $desiredRating){
+
+		$query = sprintf("INSERT INTO %s (exerciseId, goalId, desiredRating, rating)
+			VALUES ('%s', '%s', '%s', '%s')",
+				EXERCISE_TO_GOAL_TABLE,
+				mysql_real_escape_string($exerciseId),
+				mysql_real_escape_string($goalId),
+				mysql_real_escape_string($desiredRating),
+				'1');
+		$result = mysql_query($query, $conn);
+
+		if(!$result){
+			$message = "Error inserting exercise to goal relation.";
+			throw new Exception($message);
+		}
+	}
+
+	return 1;
+}
+
+function get_goals_for_diver($diverId){
+
+	$conn = getConnection();
+	$query = sprintf("SELECT * FROM %s WHERE diverId = '%s'",
+		GOALS_TABLE,
+		mysql_real_escape_string($diverId));
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error getting goals for diver.";
+		throw new Exception($message);
+	}
+
+	$rows = array();
+
+	while($row = mysql_fetch_assoc($result)){
+		$rows[] = $row;
+	}
+
+	return $rows;
+}
+
 ?>

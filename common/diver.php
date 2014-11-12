@@ -32,14 +32,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	if($_POST['method'] == 'create_diver' && isset($_POST['fname']) && 
 		isset($_POST['lname']) && isset($_POST['coachId'])) {
 		
-		$value = create_diver($_POST['fname'], $_POST['lname'], $_POST['coachId']);
+		$value = create_diver($_POST['coachId'], $_POST['fname'], $_POST['lname']);
 		
-		// If the insertion failed record error message in result
-		if ($value == '0') {
-			$result = 'Registration failed, ensure all fields have proper values and coach ID is correct';
+		// If the insertion failed echo empty message for error
+		if ($value == '') {
+			$result = '';
 		}
 		else {
-			$result = '';
+			$result = $value;
 		}
 	}
 	/**
@@ -95,8 +95,17 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 		$result = get_all_divers();
 		echo json_encode($result);
 	}
+	else if($method == 'get_divers_by_name'){
+		$name = $_GET['name'];
+		$result = get_divers_by_name($name);
+
+		echo json_encode($result);
+	}
 	else if($method == 'get_diver') {
-		$result = get_diver();
+
+		$id = $_GET['diverId'];
+		$result = get_diver($id);
+
 		echo json_encode($result);
 	}
 }
@@ -109,26 +118,29 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 * create_diver
 *
 * Function to create a diver and insert into the database
+* @param int $coachId : ID of this diver's coach
 * @param string $fname : First name of the diver
 * @param Date $lname : Last name of the diver
-* @param int $coachId : ID of this diver's coach
 *
-* @return int n : Number of affected rows in the sql query
-* 	n >= 1 -> Insert worked, multiple rows affected
-*	n = 0 -> Insert failed, no rows affected
+* @return int id : id associated with the newly entered row
 **/
-function create_diver($fname, $lname, $coachId){
+function create_diver($coachId, $fname, $lname){
 	$conn = getConnection();
 	
 	// Check if coach exists
-	$query = sprintf('SELECT COUNT(*) FROM %s WHERE coachId = %s',
+	$query = sprintf('SELECT * FROM %s WHERE coachId = %s',
 		mysql_real_escape_string(COACHES_TABLE),
 		mysql_real_escape_string($coachId));
 		
 	$result = mysql_query($query, $conn);
-	
+	if(!$result){
+		$errMsg = "Error creating new diver: " . mysql_error($conn);
+		mysql_close($conn);
+		throw new Exception($errMsg);
+	}
+
 	// If no coach exists, return 0
-	if (mysql_fetch_row($result)[0] == '0') {
+	if (mysql_fetch_assoc($result) == '') {
 		return 0;
 	}
 	else {
@@ -148,7 +160,7 @@ function create_diver($fname, $lname, $coachId){
 			throw new Exception($message);
 		}
 
-		return mysql_affected_rows($conn);
+		return mysql_insert_id($conn);
 	}
 }
 
@@ -220,11 +232,17 @@ function get_diver($diverId) {
 	$conn = getConnection();
 	
 	// Check if diver exists
-	$query = sprintf('SELECT * FROM %s WHERE diverId = %s',
-		mysql_real_escape_string(DIVERS_TABLE),
+	$query = sprintf('SELECT * FROM %s WHERE diverId = "%s"',
+		DIVERS_TABLE,
 		mysql_real_escape_string($diverId));
 		
-	$result = mysql_fetch_array(mysql_query($query, $conn));
+	$result = mysql_query($query, $conn);
+
+	$row = mysql_fetch_assoc($result);
+	if(!$result){
+		$message = "Error getting diver";
+		throw new Exception($message);
+	}
 	
 	return $result;
 }
@@ -256,4 +274,27 @@ function get_all_divers(){
 
 	return $rows;
 }
+
+function get_divers_by_name($name){
+
+	$conn = getConnection();
+	$query = sprintf("SELECT * FROM %s WHERE fname LIKE '%s' OR lname LIKE '%s'",
+		DIVERS_TABLE,
+		mysql_real_escape_string($name),
+		mysql_real_escape_string($name));
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error getting divers";
+		throw new Exception($message);
+	}
+
+	$rows = array();
+	while($row = mysql_fetch_assoc($result)){
+		$rows[] = $row;
+	}
+
+	return $rows;
+}
+
 ?>
