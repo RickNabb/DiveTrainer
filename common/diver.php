@@ -17,6 +17,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 require_once('bootstrap.php');
+require_once('practice.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
@@ -107,6 +108,12 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 		$result = get_diver($id);
 
 		echo json_encode($result);
+	}
+	else if($method == 'get_diver_practices') {
+		if (isset($_GET['diverId'])) {
+			$id = $_GET['diverId'];
+			echo json_encode(get_diver_practices($id));
+		}
 	}
 }
 
@@ -220,6 +227,7 @@ function load_info() {
 	$_SESSION['dive_trainer']['lname'] = $result['lname'];
 	$_SESSION['dive_trainer']['coachId'] = $result['coachId'];
 }
+
 /**
 * get_diver
 *
@@ -295,6 +303,37 @@ function get_divers_by_name($name){
 	}
 
 	return $rows;
+}
+
+/**
+* get_diver_practices
+*
+* Function to get a diver's list of practices
+* @param int $diverId : ID of the diver
+*
+* @return practices - the list of practice objects
+**/
+function get_diver_practices($diverId) {		
+	$conn = getConnection();
+	
+	// Check if diver exists
+	$query = sprintf('SELECT * FROM %s WHERE diverId = "%s"',
+		DIVER_TO_PRACTICE_TABLE,
+		mysql_real_escape_string($diverId));
+		
+	$result = mysql_query($query, $conn);
+
+	if(!$result){
+		$message = "Error getting diver";
+		throw new Exception($message);
+	}
+	
+	$practices = array();
+	while ($row = mysql_fetch_assoc($result)) {
+		$practices[] = get_practice($row['practiceId']);
+	}
+	
+	return $practices;
 }
 
 ?>

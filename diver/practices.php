@@ -4,68 +4,64 @@
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<?php
-		  include("include.php");
-		  session_start(); 
-	?>
-
+	<?php include("include.php"); ?>
+	
 	<script>
+		$( document ).ready( loadPractices );
+		
+		// Gets the practice list for this coachId
+		function loadPractices() {
+			var id = <?php session_start(); echo $_SESSION["dive_trainer"]["userId"]?>;
+			$.ajax({
+				type: "GET",
+				url: "../common/diver.php",
+				data: { method: "get_diver_practices",
+						diverId: id },
+				dataType: "json"
+				}).success(function( result ) {
+					var months = new Array("January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December");
 
-		function filterPractices(){
-			
-			var filter = $("#select_practice_filter").val();
-			switch(filter){
-				case "Past 10 Practices":
-					var date_now = new Date();
-					date_now = date_now.getDate();
-
-					$("div[id*='practice_']").each(function(){
-						var date = new Date($(this).val());
-						if(date < date_now - 10){
-							$(this).hide();
-						}
-					});
-					break;
-				case "Past Week's Practices":
-					break;
-				case "Past Month's Practices":
-					break;
-				case "All Past Practices":
-					break;
-			}
+					// No practices found
+					if (result.length == 0) {
+						$( "#filter" ).after(
+						"<div class='row row-offset-md'>" +
+							"<div class='col-xs-offset-1 col-sm-offset-1'>" +
+								"<h4 style='color: #ccc;'>We didn't find any practices!</h4><br/>" +
+							"</div>" +
+						"</div>");
+					}
+					
+					// Make a row for each practice
+					for (var i = 0; i < result.length; i++) {
+						var d = new Date(result[i].practice.date);
+						var date = months[d.getUTCMonth()] + " " + d.getUTCDate() + ", " + d.getUTCFullYear();
+						$( "#filter" ).after(
+						"<div class='row'>" +
+							"<div class='adminHomeItem'>" +
+								"<h3>" + date + "</h3>" +
+								"<span class='glyphicon glyphicon-chevron-right' onclick=\"loadPractice(" + result[i].practice.practiceId + ");\"></span>" +
+							"</div>" +
+						"</div>");
+					}
+			});
 		}
-
+		
+		// Navigates to the view page for a specific practice
+		function loadPractice(practiceId) {
+			window.location = "viewPractice.php?practiceId=" + practiceId;
+		}
+	
 	</script>
 </head>
 <body>
-	<div class="topNav">
-		<div class="row blue">
-			<div class="col-sm-offset-1 col-xs-offset-1">
-				<h4 class="white ptsans">Welcome, <?php echo $_SESSION['dive_trainer']['fname']; ?>!</h4>
-			</div>
-		</div>
 
-		<nav class="navbar navbar-default" role="navigation">
-			<div class="container-fluid">
-				<div class="navbar-header">
-					<!--<span class="glyphicon glyphicon-chevron-left back-arrow"></span>-->
-					<p class="navbar-title">Practices</p>
-				</div>			
-			</div>
-		</nav>
-	</div>
+	<?php include('../common/header.php'); echo_header('Practices', true, 'index.php', '-sm'); ?>
 
+	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
 
-		<div id="loaderDiv">
-			<img src="./img/loader.gif" alt="Loading..."/>
-			<h4>Please wait...</h4>
-		</div>
-
-		<div class="nav-offset"></div>
-
-		<div class="row">
+		<div id="filter" class="row">
 			<select style="margin-left: 10px; color: #21aeff; font-size: 20px; border:none;" 
 				id="select_practice_filter" class="pull-left">
 				<option>Past 10 Practices</option>
@@ -75,56 +71,15 @@
 			</select>
 		</div>
 
-		<?php
-
-			$conn = getConnection();
-			$query = sprintf("SELECT * FROM %s",
-				PRACTICES_TABLE);
-
-			// TODO: Write SQL to first fetch divers->practice table results for diverId,
-			// then join with practice and get practice data
-
-			$result = mysql_query($query, $conn);
-			if(!$result){
-				$message = "Error retrieving practices";
-				throw new Exception($message);
-			}
-
-			if(mysql_num_rows($result) == 0){
-				echo "<div class='row row-offset-md'>
-						<div class='col-xs-offset-1 col-sm-offset-1'>
-							<h4 style='color: #ccc;'>We didn't find any practices!</h4><br/>
-							<h4 style='color: #ccc;'>Ask your coach to add you to some practices!</h4>
-						</div>
-					   </div>";
-			}
-			else{
-				while($row = mysql_fetch_assoc($result)){
-
-					$date = new DateTime();
-					$dateItems = split('[/.-]', $row['date']);
-					$date->setDate(intval($dateItems[0]), intval($dateItems[1]), intval($dateItems[2]));
-
-					echo "<div class='row'>
-							<div class='goalItem' id='practice_" . $row['practiceId'] . "'>
-								<h3>" . date_format($date, 'F jS, Y') . "</h3>
-								<span class='glyphicon glyphicon-chevron-right'></span>
-							</div>
-						</div>";
-				}
-			}
-
-		?>
-
 		<div class="ftr-offset"></div>
 	</div>
-		
-
+	
 	<div class="admin-bottom-nav">
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
 			<li class="current"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></li>
+			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
 		</ul>
 	</div>
 </body>

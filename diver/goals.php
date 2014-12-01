@@ -20,7 +20,7 @@
 </head>
 <body>
 	
-	<?php include('../common/header.php'); echo_header('Goals'); ?>
+	<?php include('../common/header.php'); echo_header('Goals', true, 'index.php', '-sm'); ?>
 
 	<div class="container container-fluid">
 
