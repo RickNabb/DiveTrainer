@@ -232,7 +232,7 @@ function get_diver($diverId) {
 	$conn = getConnection();
 	
 	// Check if diver exists
-	$query = sprintf('SELECT * FROM %s WHERE diverId = "%s"',
+	$query = sprintf('SELECT * FROM %s WHERE diverId = %s',
 		DIVERS_TABLE,
 		mysql_real_escape_string($diverId));
 		
@@ -244,7 +244,7 @@ function get_diver($diverId) {
 		throw new Exception($message);
 	}
 	
-	return $result;
+	return $row;
 }
 
 /**

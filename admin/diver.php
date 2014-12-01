@@ -34,7 +34,7 @@
 
 			}).error(function(data){
 
-				//alert(data);
+				alert(data);
 			});
 		}
 
@@ -49,6 +49,12 @@
 				},
 				dataType: "json"
 			}).success(function(data){
+
+				if(data.length == 0){
+					$("#goals").append("<div class='row'><div class='col-sm-offset-1 col-xs-offset-1 col-sm-10 col-xs-10'>" + 
+						"<h4>This diver has no goals! Perhaps you should make one for them.</h4><br/>"
+						+ "</div></div>");
+				}
 	
 				for(var i = 0; i < data.length; i++){
 
@@ -101,17 +107,29 @@
 
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1 col-md-offset-1">
-				<h3 id="name">Nick Rabb</h3>
+				<h3 id="name"></h3>
 			</div>
 		</div>
 
 		<div class="row">
 			<div class="col-sm-offset-1 col-xs-offset-1 col-md-offset-1">
-				<h4 id="email" class="fgOrange" data-toggle="modal" data-target="#emailModal">nrabb@outlook.com</h4>
+				<h4 id="email" class="fgOrange" data-toggle="modal" data-target="#emailModal"></h4>
 			</div>
 		</div>
 
-		<div id="goals" class="row row-offset-md"></div>
+		<div class="row row-offset-sm">
+			<div class="col-sm-offset-1 col-xs-offset-1 col-sm-4 col-xs-4">
+				<h4>Goals</h4>
+			</div>
+			<div class="col-sm-offset-9 col-xs-offset-9">
+				<span class="glyphicon glyphicon-plus-sign addButtonSm fgGreen" style="padding-top: 10px;"
+					data-toggle="modal" data-target="#' . $types[$i] . 'Modal"></span>
+			</div>
+			<div class="col-sm-offset-1 col-xs-offset-1">
+				<hr />
+			</div>
+		</div>
+		<div id="goals" class="row"></div>
 	</div>
 
 	<div class="admin-bottom-nav">
@@ -119,7 +137,7 @@
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Divers</p></li>
 			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
-			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
+			<li><a href="./skills.php"><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></a></li>
 		</ul>
 	</div>
 </body>
