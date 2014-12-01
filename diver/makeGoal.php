@@ -11,6 +11,7 @@
 
 	<script>
 
+		// TODO: fix dates being 1 behind
 		$(document).ready(load_modal_skills);
 
 		function load_modal_skills(){
@@ -46,12 +47,11 @@
 				
 			var date_month = $("#date_month").val();
 			var date_month_num = months.date_month;
-			var date_full = date_month_num + "/" + $("#date_day").val() + "/" + $("#date_year").val();
+			var date_full = date_month_num + "-" + $("#date_day").val() + "-" + $("#date_year").val();
 
 			var date_now = new Date();
-			
 			// Get skills
-			var skills = [];
+			var skills = {};
 			var inputs = $("div[id^='exercise']")
 			for (var i = 0; i < inputs.length; i++) {
 				var id = inputs[i].id.replace("exercise", "");
@@ -63,8 +63,8 @@
 				{
 					diverId:<?php echo $_SESSION['dive_trainer']['userId']; ?>,
 					name:$("#input_title").val(),
-					startDate: (date_now.getMonth()+1) + "/" + date_now.getDate() + "/" + (date_now.getYear() + 1900),
-					endDate:date_full,
+					startDate: date_now.toLocaleDateString("en-US"),
+					endDate: date_full,
 					skills: skills, // key = skillId, value = desired rating
 					method:"create_goal"
 				},
@@ -195,7 +195,6 @@
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
-			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
 			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
 		</ul>
 	</div>

@@ -44,18 +44,14 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		if ($goalId == '') {
 			$result = 'Creation failed, ensure all fields have proper values.';
 		}
-		else {
-			
+		else if (isset($_POST['skills'])) {
 			$result = create_exercise_to_goal($goalId, $_POST['skills']);
-			echo ($result == 1 ? 'success' : 'failure');
+			echo ($result == 1 ? '' : 'failure');
 		}
 	}
 	else {
 		$result = 'Invalid function call';
 	}
-	
-	// Print out result
-	echo $result;
 }
 
 else if($_SERVER['REQUEST_METHOD'] == "GET"){
