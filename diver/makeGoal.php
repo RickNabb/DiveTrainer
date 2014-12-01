@@ -112,7 +112,7 @@
 	</script>
 </head>
 <body>
-	<?php include('../common/header.php'); echo_header('Make Goal', true, '-sm'); ?>
+	<?php include('../common/header.php'); echo_header('Make Goal', true, 'goals.php', '-sm'); ?>
 
 	<div class="nav-offset"></div>
 
@@ -194,8 +194,8 @@
 	<div class="admin-bottom-nav">
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
-			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Goals</p></li>
-			<li><a href="./practices"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
+			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
+			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
 			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
 		</ul>
 	</div>

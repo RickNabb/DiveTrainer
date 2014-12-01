@@ -17,6 +17,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 require_once('bootstrap.php');
+require_once('exercise.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 // HTTP METHODS
@@ -26,10 +27,15 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	$result = '';
 	session_start();
 	
+	// Get the deisred method from the HTTP call
+	if (isset($_POST['method'])) {
+		$method = $_POST['method'];
+	}
+	
 	/**
 	* Create goal method
 	**/
-	if($_POST['method'] == 'create_goal' && isset($_POST['diverId']) && 
+	if($method == 'create_goal' && isset($_POST['diverId']) && 
 		isset($_POST['name']) && isset($_POST['startDate']) && isset($_POST['endDate'])) {
 		
 		$goalId = create_goal($_POST['diverId'], $_POST['name'], $_POST['startDate'], $_POST['endDate']);
@@ -54,10 +60,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
 else if($_SERVER['REQUEST_METHOD'] == "GET"){
 
-	if(isset($_GET['method']) && $_GET['method'] == 'get_goals_for_diver'){
-
+	// Get the deisred method from the HTTP call
+	if (isset($_GET['method'])) {
+		$method = $_GET['method'];
+	}
+	
+	if($method == 'get_goals_for_diver'){
 		$diverId = $_GET['diverId'];
 		echo json_encode(get_goals_for_diver($diverId));
+	}
+	else if($method == 'get_goal'){
+		$goalId = $_GET['goalId'];
+		echo json_encode(get_goal($goalId));
 	}
 }
 
@@ -157,4 +171,51 @@ function get_goals_for_diver($diverId){
 	return $rows;
 }
 
+function get_goal($goalId){
+
+	$conn = getConnection();
+	$query = sprintf("SELECT * FROM %s WHERE goalId = '%s'",
+		GOALS_TABLE,
+		mysql_real_escape_string($goalId));
+
+	$result = mysql_query($query, $conn);
+	
+	if(!$result){
+		$message = "Error getting goal.";
+		throw new Exception($message);
+	}
+	
+	$goal = mysql_fetch_assoc($result);
+	$skills = get_skills($goalId, $conn);
+	
+	return array('goal' => $goal, 'skills' => $skills);
+}
+
+/**
+* get_skills
+*
+* Function to get a skills related to a goal
+* @param int goalId : the id of the related goal
+*
+* @return skills - the list of skills
+**/
+function get_skills($goalId, $conn) {
+	// Get practice to exercise relations
+	$query = sprintf('SELECT * FROM %s WHERE goalId = %s',
+		mysql_real_escape_string(EXERCISE_TO_GOAL_TABLE),
+		mysql_real_escape_string($goalId));
+
+	$relation = mysql_query($query,$conn);
+	
+	// Get each exercise info
+	$skills = array();
+	while($row =  mysql_fetch_assoc($relation)) {
+		$skill = get_exercise($row['exerciseId']);
+		$skill["rating"] = $row['rating'];
+		$skills[] = $skill;
+		
+	}
+	
+	return $skills;
+}
 ?>
