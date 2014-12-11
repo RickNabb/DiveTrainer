@@ -36,18 +36,24 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	* Create goal method
 	**/
 	if($method == 'create_goal' && isset($_POST['diverId']) && 
-		isset($_POST['name']) && isset($_POST['startDate']) && isset($_POST['endDate'])) {
-		
-		$goalId = create_goal($_POST['diverId'], $_POST['name'], $_POST['startDate'], $_POST['endDate']);
+		isset($_POST['title']) && isset($_POST['endDate'])) {
+
+		$startDate = new DateTime();
+
+		$goalId = create_goal($_POST['diverId'], $_POST['title'], date_format($startDate, 'm-d-Y'), $_POST['endDate']);
 		
 		// If the insertion failed record error message in result
 		if ($goalId == '') {
 			$result = 'Creation failed, ensure all fields have proper values.';
 		}
-		else if (isset($_POST['skills'])) {
-			$result = create_exercise_to_goal($goalId, $_POST['skills']);
-			echo ($result == 1 ? '' : 'failure');
+		else {
+			echo $goalId;
 		}
+	}
+	else if($method == 'create_exercise_to_goal' && isset($_POST['goalId']) && isset($_POST['skills'])) {
+
+		$result = create_exercise_to_goal($_POST['goalId'], $_POST['skills']);
+		echo ($result == 1 ? 'success' : 'failure');
 	}
 	else {
 		$result = 'Invalid function call';
@@ -68,6 +74,12 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 	else if($method == 'get_goal'){
 		$goalId = $_GET['goalId'];
 		echo json_encode(get_goal($goalId));
+	}
+	else if($method == 'get_exercises_for_goal'){
+		$goalId = $_GET['goalId'];
+		$result = get_exercises_for_goal($goalId);
+		$result[] = array('count' => $_GET['count']);
+		echo json_encode($result);
 	}
 }
 
@@ -182,7 +194,7 @@ function get_goal($goalId){
 	}
 	
 	$goal = mysql_fetch_assoc($result);
-	$skills = get_skills($goalId, $conn);
+	$skills = get_exercises_for_goal($goalId);
 	
 	return array('goal' => $goal, 'skills' => $skills);
 }
@@ -195,23 +207,30 @@ function get_goal($goalId){
 *
 * @return skills - the list of skills
 **/
-function get_skills($goalId, $conn) {
+function get_exercises_for_goal($goalId) {
+
+	$conn = getConnection();
+
 	// Get practice to exercise relations
-	$query = sprintf('SELECT * FROM %s WHERE goalId = %s',
-		mysql_real_escape_string(EXERCISE_TO_GOAL_TABLE),
+	$query = sprintf('SELECT * FROM %s as e1 JOIN %s as e2 on e1.exerciseId=e2.exerciseId WHERE e1.goalId = %s',
+		EXERCISE_TO_GOAL_TABLE,
+		EXERCISES_TABLE,
 		mysql_real_escape_string($goalId));
 
-	$relation = mysql_query($query,$conn);
-	
-	// Get each exercise info
-	$skills = array();
-	while($row =  mysql_fetch_assoc($relation)) {
-		$skill = get_exercise($row['exerciseId']);
-		$skill["rating"] = $row['rating'];
-		$skills[] = $skill;
-		
+	$result = mysql_query($query, $conn);
+
+	if(!$result){
+		$message = 'Error retrieving skills for goal id: ' . $goalId;
+		throw new Exception($message);
 	}
 	
-	return $skills;
+	// Get each exercise info
+	$rows = array();
+	while($row =  mysql_fetch_assoc($result)) {
+		$rows[] = $row;
+	}
+	
+	return $rows;
 }
+
 ?>

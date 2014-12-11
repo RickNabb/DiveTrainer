@@ -34,7 +34,7 @@
 				});
 		}
 
-		function search_divers(){
+		function search_skills(){
 
 			$("#skill_list").empty();
 
@@ -42,11 +42,11 @@
 
 				loadSkills();
 			}
-			else{
+			else{ // TODO: Write PHP to get skills by name
 
 				$.ajax({
 					type: "GET",
-					url: "../common/diver.php",
+					url: "../common/skill.php",
 					data: {
 						method: "get_divers_by_name",
 						name: $("#search").val()
@@ -55,8 +55,8 @@
 				}).success(function(data){
 
 					for(var i = 0; i < data.length; i++){
-						$("#diver_list").append("<div class='row'><div class='adminHomeItem'><a href='./diver.php?id="
-							+ data[i].diverId + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
+						$("#skill_list").append("<div class='row'><div class='adminHomeItem'><a href='./skill.php?id="
+							+ data[i].skill + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
 					}
 
 				}).error(function(data){
@@ -87,7 +87,7 @@
 				<input type="text" placeholder="Search" id="search" class="form-control" />
 			</div>
 			<div class="col-xs-1 col-sm-1" style="padding: 0;">
-				<button class="btn btn-default" onclick="search_divers();"><span class="glyphicon glyphicon-search"></span></button>
+				<button class="btn btn-default" onclick="search_skills();"><span class="glyphicon glyphicon-search"></span></button>
 			</div>
 		</div>
 

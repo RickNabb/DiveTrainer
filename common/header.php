@@ -24,47 +24,47 @@
 function echo_header($title, $back_vis=false, $back_url='./index.php', $txt_modifier=''){
 
 	// So session starts don't overlap
-	if(session_id() == null)
-		session_start();
+	if(session_id() != null){
 
-	echo '<div id="topNav_mobile">
-			<div class="row blue">
-				<div class="col-xs-8 col-sm-8" style="margin-left: 5%;">
-					<h4 class="white ptsans">Welcome, ' . $_SESSION["dive_trainer"]["fname"] . '!</h4>
+		echo '<div id="topNav_mobile">
+				<div class="row blue">
+					<div class="col-xs-8 col-sm-8" style="margin-left: 5%;">
+						<h4 class="white ptsans">Welcome, ' . $_SESSION["dive_trainer"]["fname"] . '!</h4>
+					</div>
+					<div class="col-sm-offset-1 col-xs-offset-1">
+						<a href="#" onclick="logOut();"><p style="margin-top: 8px; color: #fff;">Log Out</p></a>
+					</div>
 				</div>
-				<div class="col-sm-offset-1 col-xs-offset-1">
-					<a href="#" onclick="logOut();"><p style="margin-top: 8px; color: #fff;">Log Out</p></a>
-				</div>
+
+				<nav class="navbar navbar-default" role="navigation">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							' . ($back_vis ? '<a href="' . $back_url . '"><span class="glyphicon 
+								glyphicon-chevron-left back-arrow"></span></a>' : '') . '
+							<p class="navbar-title' . $txt_modifier . '">' . $title . '</p>
+						</div>			
+					</div>
+				</nav>
 			</div>
+			<div id="topNav_tablet">
+				<div class="row blue">
+					<div class="col-md-10" style="margin-left: 20px;">
+						<h4 class="white ptsans">Welcome, ' . $_SESSION["dive_trainer"]["fname"] . '!</h4>
+					</div>
+					<div class="col-md-offset-1">
+						<a href="#" onclick="logOut();"><p style="margin-top: 8px; color: #fff;">Log Out</p></a>
+					</div>
+				</div>
 
-			<nav class="navbar navbar-default" role="navigation">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						' . ($back_vis ? '<a href="' . $back_url . '"><span class="glyphicon 
-							glyphicon-chevron-left back-arrow"></span></a>' : '') . '
-						<p class="navbar-title' . $txt_modifier . '">' . $title . '</p>
-					</div>			
-				</div>
-			</nav>
-		</div>
-		<div id="topNav_tablet">
-			<div class="row blue">
-				<div class="col-md-10" style="margin-left: 20px;">
-					<h4 class="white ptsans">Welcome, ' . $_SESSION["dive_trainer"]["fname"] . '!</h4>
-				</div>
-				<div class="col-md-offset-1">
-					<a href="#" onclick="logOut();"><p style="margin-top: 8px; color: #fff;">Log Out</p></a>
-				</div>
-			</div>
-
-			<nav class="navbar navbar-default" role="navigation">
-				<div class="container-fluid">
-					<div class="navbar-header">
-						<p class="navbar-title">' . $title . '</p>
-					</div>			
-				</div>
-			</nav>
-		</div>';
+				<nav class="navbar navbar-default" role="navigation">
+					<div class="container-fluid">
+						<div class="navbar-header">
+							<p class="navbar-title">' . $title . '</p>
+						</div>			
+					</div>
+				</nav>
+			</div>';
+	}
 }
 
 ?>
