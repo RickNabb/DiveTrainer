@@ -4,10 +4,7 @@
 	<title></title>
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-	<?php 
-		include("include.php"); 
-		session_start(); 
-	?>
+	<?php include("include.php"); ?>
 
 	<script>
 
@@ -78,6 +75,12 @@
 		<div class="ftr-offset"></div>
 	</div>
 	
-	<?php include('footer.php'); ?>
+	<div class="admin-bottom-nav">
+		<ul>
+			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
+			<li class="current"><span class="glyphicon glyphicon-user"></span><p>Goals</p></li>
+			<li><a href="./skills.php"><span class="glyphicon glyphicon-list"></span><p>Skills</p></a></li>
+		</ul>
+	</div>
 </body>
 </html>

@@ -6,7 +6,7 @@
 
 	<?php include("include.php"); 
 		require_once("./bootstrap.php");
-		session_start(); ?>
+	?>
 
 	<script>
 		$( document ).ready( load_divers );

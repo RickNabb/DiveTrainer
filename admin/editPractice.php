@@ -140,7 +140,7 @@
 </head>
 <body>
 	
-	<?php include('../common/header.php'); echo_header('Edit Practice', true, '-sm'); ?>
+	<?php include('../common/header.php'); echo_header('Edit Practice', true, 'viewPractice.php?practiceId='.$_GET['practiceId'], '-sm'); ?>
 
 	<div class="nav-offset"></div>
 

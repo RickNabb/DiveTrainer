@@ -78,8 +78,7 @@
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
-			<li class="current"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></li>
-			<li><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
+			<li><a href="./skills.php"><span class="glyphicon glyphicon-list"></span><p>Skills</p></a></li>
 		</ul>
 	</div>
 </body>

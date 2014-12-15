@@ -99,9 +99,8 @@
 	<div class="admin-bottom-nav">
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
-			<li><a href="./divers.php"><span class="glyphicon glyphicon-user"></span><p>Divers</p></a></li>
-			<li><a href="./practices.php"><span class="glyphicon glyphicon-pencil"></span><p>Practices</p></a></li>
-			<li class="current"><span class="glyphicon glyphicon-th-list"></span><p>Skills</p></li>
+			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
+			<li class="current"><span class="glyphicon glyphicon-list"></span><p>Skills</p></li>
 		</ul>
 	</div>
 </body>
