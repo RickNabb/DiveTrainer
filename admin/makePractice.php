@@ -11,20 +11,21 @@
 		$(document).ready(load_exercises);
 	
 		function load_exercises() {
-			var types = ["skill", "warmup", "conditioning", "flexibility"];
+			var types = ["safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m"];
 			
 			for (var j = 0; j < types.length; j++) {
 				$.ajax({
 					type: "GET",
 					url: "../common/exercise.php",
-					data: { method : "get_" + types[j] },
+					data: { method : "get_exercise_type",
+							type : types[j] },
 					dataType: "json"
 				}).success(function(data) {
 					for (var i = 0; i < data.exercises.length; i++) {
 						$("#" + data.type + "_form").append(
 							'<div class="row">' +
 								'<div class="col-sm-offset-2 col-xs-offset-2">' +
-									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name + " level " + data.exercises[i].level + '</input>' +
+									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name +'</input>' +
 								'</div>' +
 							'</div>');
 					}
@@ -82,13 +83,13 @@
 		}
 
 		function remove_skill(section, value){
-
+			alert("remove_skill");
 			var button = $("#" + section + "_exercises_list button:contains('" + value + "')");
 			$("#" + section + "_form input[id*='" + button[0].id.substring(8) + "']")[0].checked = false;
 			button.remove();
 
 			if($("#" + section + "_exercises_list > div > div").children().size() == 0){
-
+				alert("empty");
 				$("#" + section + "_exercises_list > div > div").append("<p>There is nothing here. Add an exercise!</p>");
 			}
 		}
@@ -106,7 +107,7 @@
 		<!-- Exercises Modals --> <!-- TODO: Use one modal and dynamically switch content (?) -->
 		
 		<?php
-		$types = array("warmup", "skill", "conditioning", "flexibility");
+		$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
 		
 		foreach ($types as $type) {
 			echo '<div class="modal fade" id="' . $type . 'Modal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
@@ -160,8 +161,9 @@
 		</div>
 
 		<?php
-			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
-			$types = array("warmup", "skill", "conditioning", "flexibility");
+			$titles = array("Safety Education", "Warm Up","Conditioning", "Flexibility", "Trampoline", "Dryboard", "Platform", "Deck/Mat/Bulkhead", "1m", "3m");
+			
+			$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
 			
 			for ($i = 0; $i < count($titles); $i++) {
 				echo '<!-- ' . $titles[$i] . ' Section -->

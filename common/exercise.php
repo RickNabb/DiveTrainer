@@ -54,38 +54,21 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	**/
 	if($method == 'get_exercise') {
 		$result = '';
-		if (isset($_POST['exerciseId'])) {
+		if (isset($_GET['exerciseId'])) {
 			$result = get_exercise($_POST['exerciseId']);
 		}
 		
 		echo json_encode($result);
 	}
 	/**
-	* Get skill method
+	* Get exercise list by type method
 	**/
-	else if($method == 'get_skill') {
-		$result = get_exercise_type('skill');
-		echo json_encode($result);
-	}
-	/**
-	* Get warmup method
-	**/
-	else if($method == 'get_warmup') {
-		$result = get_exercise_type('warmup');
-		echo json_encode($result);
-	}
-	/**
-	* Get conditioning method
-	**/
-	else if($method == 'get_conditioning') {
-		$result = get_exercise_type('conditioning');
-		echo json_encode($result);
-	}
-	/**
-	* Get flexibility method
-	**/
-	else if($method == 'get_flexibility') {
-		$result = get_exercise_type('flexibility');
+	else if($method == 'get_exercise_type') {
+		$result = '';
+		if (isset($_GET['type'])) {
+			$result = get_exercise_type($_GET['type']);
+		}
+		
 		echo json_encode($result);
 	}
 }
@@ -95,27 +78,33 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
-* create_exercise
+* create_exercise_with_id
 *
 * Function to create a exercise and insert into the database
+* @param int $id : ID number of the exercise
 * @param string $name : Name of the exercise
+* @param string $diveNum : The dive number
 * @param int $level : Skill level of the exercise
 * @param string $type : Type of exercise (skill, warm-up, conditioning...)
 * @param string $description : A description of the exercise
+* @param string $videoURL : The location of the video for the skill
 *
 * @return int n : Number of affected rows in the sql query
 * 	n >= 1 -> Insert worked, multiple rows affected
 *	n = 0 -> Insert failed, no rows affected
 **/
-function create_exercise($name, $level, $type, $description) {
+function create_exercise_with_id($id, $name, $diveNum, $level, $type, $description, $videoURL) {
 	$conn = getConnection();
-	$query = sprintf('INSERT INTO %s (name, level, type, description)
-		VALUES ("%s", "%s", "%s", "%s")',
+	$query = sprintf('INSERT INTO %s (exerciseId, name, diveNum, level, type, description, videoURL)
+		VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s")',
 		mysql_real_escape_string(EXERCISES_TABLE),
+		mysql_real_escape_string($id),
 		mysql_real_escape_string($name),
+		mysql_real_escape_string($diveNum),
 		mysql_real_escape_string($level),
 		mysql_real_escape_string($type),
-		mysql_real_escape_string($description));
+		mysql_real_escape_string($description),
+		mysql_real_escape_string($videoURL));
 
 	$result = mysql_query($query,$conn);
 	if(!$result){
@@ -123,7 +112,47 @@ function create_exercise($name, $level, $type, $description) {
 		throw new Exception($message);
 	}
 	
-	return mysql_affected_rows($conn);
+	$val = mysql_affected_rows($conn);
+	mysql_close($conn);
+	return $val;
+}
+
+/**
+* create_exercise
+*
+* Function to create a exercise and insert into the database
+* @param string $name : Name of the exercise
+* @param string $diveNum : The dive number
+* @param int $level : Skill level of the exercise
+* @param string $type : Type of exercise (skill, warm-up, conditioning...)
+* @param string $description : A description of the exercise
+* @param string $videoURL : The location of the video for the skill
+*
+* @return int n : Number of affected rows in the sql query
+* 	n >= 1 -> Insert worked, multiple rows affected
+*	n = 0 -> Insert failed, no rows affected
+**/
+function create_exercise($name, $diveNum, $level, $type, $description, $videoURL) {
+	$conn = getConnection();
+	$query = sprintf('INSERT INTO %s (name, diveNum, level, type, description, videoURL)
+		VALUES ("%s", "%s", "%s", "%s", "%s", "%s")',
+		mysql_real_escape_string(EXERCISES_TABLE),
+		mysql_real_escape_string($name),
+		mysql_real_escape_string($diveNum),
+		mysql_real_escape_string($level),
+		mysql_real_escape_string($type),
+		mysql_real_escape_string($description),
+		mysql_real_escape_string($videoURL));
+
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error inserting exercise into database";
+		throw new Exception($message);
+	}
+	
+	$val = mysql_affected_rows($conn);
+	mysql_close($conn);
+	return $val;
 }
 
 /**

@@ -106,6 +106,7 @@ function log_in($authId, $ident, $pass){
 		}
 
 		$_SESSION['dive_trainer']['userId'] = $authId;
+		$_SESSION['dive_trainer']['isAdmin'] = True;
 		coach_load_info();
 
 		return 1;
@@ -124,6 +125,7 @@ function log_in($authId, $ident, $pass){
 			return 0;
 		}
 		$_SESSION['dive_trainer']['userId'] = $authId;
+		$_SESSION['dive_trainer']['isAdmin'] = False;
 		diver_load_info();
 		return 1;
 	}

@@ -37,7 +37,8 @@
 							
 							$skill['diveNum'] = $temp[1];
 							$skill['name'] = $temp[2];
-							$skill['type'] = $temp[3];
+							$skill['type'] = strtolower($temp[3]);
+							$skill['type'] = preg_replace('/\s+/', '', $skill['type']);
 							$skill['description'] = $temp[4];
 							
 							// Get level from string

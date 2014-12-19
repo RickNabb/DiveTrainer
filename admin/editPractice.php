@@ -11,7 +11,7 @@
 		$(document).ready( load_exercises );
 		
 		var practice = 0;
-		var types = ["skill", "warmup", "conditioning", "flexibility"];
+		var types = ["safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m"];
 	
 		// Function to load all the exercise types from the database as options
 		function load_exercises() {
@@ -21,7 +21,8 @@
 					type: "GET",
 					async: false,
 					url: "../common/exercise.php",
-					data: { method : "get_" + types[j] },
+					data: { method : "get_exercise_type",
+							type : types[j] },
 					dataType: "json"
 				}).done(function(data) {
 				
@@ -29,7 +30,7 @@
 						$("#" + data.type + "_form").append(
 							'<div class="row">' +
 								'<div class="col-sm-offset-1 col-xs-offset-1">' +
-									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name + " level " + data.exercises[i].level + '</input>' +
+									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name +'</input>' +
 								'</div>' +
 							'</div>');
 					}
@@ -149,7 +150,7 @@
 		<!-- Exercises Modals -->
 		
 		<?php
-		$types = array("warmup", "skill", "conditioning", "flexibility");
+		$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
 		
 		foreach ($types as $type) {
 			echo '<div class="modal fade" id="' . $type . 'Modal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
@@ -205,8 +206,9 @@
 		</div>
 
 		<?php
-			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
-			$types = array("warmup", "skill", "conditioning", "flexibility");
+			$titles = array("Safety Education", "Warm Up","Conditioning", "Flexibility", "Trampoline", "Dryboard", "Platform", "Deck/Mat/Bulkhead", "1m", "3m");
+			
+			$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
 			
 			for ($i = 0; $i < count($titles); $i++) {
 				echo '<!-- ' . $titles[$i] . ' Section -->
