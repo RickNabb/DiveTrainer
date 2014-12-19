@@ -24,16 +24,19 @@
 			var password = $("#input_pass").val();
 
 			$.post("./common/diver.php", 
-				{fname:fname, lname:lname, coachId:coachId, method:"create_diver"},
+				{fname:fname, lname:lname, coachId:coachId, method:"create_diver", email:email},
 				function(result) {
 					if (result != '') {
 						
 						$.post("./common/auth.php", 
-							{type:"diver", id:result, email:email, password:password, method:"register"},
+							{type:"diver", id:result, email:email, password:password, method:"register",
+								fname:fname, lname:lname},
 							function(result) {
 								if (result == 'success') {
-									
 									window.location="./index.php?register=success&email=" + email;
+								}
+								else if(result == 'existing'){
+									window.location="./index.php?register=existing";	
 								}
 								else {
 									window.location="./index.php?register=failure";
@@ -96,9 +99,8 @@
 		<nav class="navbar navbar-default" role="navigation">
 			<div class="container-fluid">
 				<div class="navbar-header">
-					<a href="./practices.php"><span class="glyphicon 
-						glyphicon-chevron-left back-arrow"></span></a>
-					<p class="navbar-title-lg">Register</p>
+					<a href="./practices.php"><span class="glyphicon glyphicon-chevron-left back-arrow"></span></a>
+					<p class="navbar-title">Register</p>
 				</div>			
 			</div>
 		</nav>

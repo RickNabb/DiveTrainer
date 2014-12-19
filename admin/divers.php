@@ -11,9 +11,12 @@
 		window.onload = function(){
 
 			loadDivers();
+			load_filters();
 		}
 
 		function loadDivers(){
+
+			$("#ajax_loader").show();
 
 			$.ajax({
 				type: "GET",
@@ -29,6 +32,35 @@
 						+ data[i].diverId + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
 				}
 
+				$("#ajax_loader").hide();
+
+			}).error(function(data){
+
+				$("#diver_list").append('<div class="row">');
+				$("#diver_list > div").append('<div class="col-sm-offset-1 col-xs-offset-1 col-sm-10 col-xs-10 alert alert-danger">');
+				$("#diver_list > div > div").append('<strong>Sorry!</strong>');
+				$("#diver_list > div > div").append('<p>We couldn\'t load all of the divers.' + 
+					' Please try again.</p></div></div>');
+
+				$("#ajax_loader").hide();
+			});
+		}
+
+		function load_filters(){
+
+			$.ajax({
+				type: "GET",
+				url: "../common/class.php",
+				data: {
+					method: "get_classes"
+				},
+				dataType: "json"
+			}).success(function(data){
+
+				for(var i = 0; i < data.length; i++){
+					$("#class_filter").append("<option level='" + data[i].level + "'>" + data[i].title + "</option>");
+				}
+
 			}).error(function(data){
 
 				$("#diver_list").append('<div class="row">');
@@ -41,6 +73,8 @@
 
 		function search_divers(){
 
+			// TODO: Take into account the fact that a filter might be applied
+
 			$("#diver_list").empty();
 
 			if($("#search").val() == ''){
@@ -48,6 +82,7 @@
 				loadDivers();
 			}
 			else{
+				$("#ajax_loader").show();
 
 				$.ajax({
 					type: "GET",
@@ -63,6 +98,7 @@
 						$("#diver_list").append("<div class='row'><div class='adminHomeItem'><a href='./diver.php?id="
 							+ data[i].diverId + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
 					}
+					$("#ajax_loader").hide();
 
 				}).error(function(data){
 
@@ -71,6 +107,48 @@
 					$("#diver_list > div > div").append('<h3>Sorry!</h3>');
 					$("#diver_list > div > div").append('<h4>We couldn\'t load all of the divers.' + 
 						' Please try again.</h4></div></div>');
+
+					$("#ajax_loader").hide();
+				});
+			}
+		}
+
+		function filter_divers(){
+
+			$("#diver_list").empty();
+
+			if($("#class_filter").val() == 'All Divers'){
+
+				loadDivers();
+			}
+			else{
+				$("#ajax_loader").show();
+
+				$.ajax({
+					type: "GET",
+					url: "../common/diver.php",
+					data: {
+						method: "get_divers_by_level",
+						level: $("#class_filter").find("option:contains(" + $("#class_filter").val() + ")").attr('level')
+					},
+					dataType: "json"
+				}).success(function(data){
+
+					for(var i = 0; i < data.length; i++){
+						$("#diver_list").append("<div class='row'><div class='adminHomeItem'><a href='./diver.php?id="
+							+ data[i].diverId + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
+					}
+					$("#ajax_loader").hide();
+
+				}).error(function(data){
+
+					$("#diver_list").append('<div class="row">');
+					$("#diver_list > div").append('<div class="col-sm-offset-1 col-xs-offset-1 col-sm-10 col-xs-10 alert alert-danger">');
+					$("#diver_list > div > div").append('<strong>Sorry!</strong>');
+					$("#diver_list > div > div").append('<p>We couldn\'t load all of the divers.' + 
+						' Please try again.</p></div></div>');
+
+					$("#ajax_loader").hide();
 				});
 			}
 		}
@@ -86,7 +164,9 @@
 	<div class="container container-fluid">	
 		<div class="row" style="padding-bottom: 20px;"> <!-- TODO: Remove styling and fix this shit -->
 			<div class="col-xs-4 col-sm-4">
-				<h4>All Divers</h4>
+				<select id="class_filter" class="pull-left filter" onchange="filter_divers();">
+					<option>All Divers</option>
+				</select>
 			</div>
 			<div class="col-xs-10 col-sm-10">
 				<input type="text" placeholder="Search" id="search" class="form-control" />
@@ -96,8 +176,10 @@
 			</div>
 		</div>
 
-		<div id="diver_list">
-		</div>
+		<div id="diver_list"></div>
+		<div id="ajax_loader" class="ajax-loader loader-lg center"></div>
+
+		<div class="ftr-offset"></div>
 	</div>
 
 	<div class="admin-bottom-nav">

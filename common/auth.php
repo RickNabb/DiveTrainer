@@ -29,14 +29,31 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 		echo log_out();
 	}
 
-	if($_POST['method'] == "register") {
+	else if($_POST['method'] == "register") {
 
 		$email = $_POST['email'];
 		$password = $_POST['password'];
 		$type = $_POST['type'];
 		$id = $_POST['id'];
+		$fname = $_POST['fname'];
+		$lname = $_POST['lname'];
 
-		echo register($type, $id, $email, $password);
+		echo register($type, $id, $email, $password, $fname, $lname);
+	}
+
+	else if($_POST['method'] == "activate_account"){
+
+		$authId = $_POST['id'];
+		$GUID = $_POST['guid'];
+
+		echo activate_account($authId, $GUID);
+	}
+
+	else if($_POST['method'] == "send_username_email"){
+
+		$authId = $_POST['authId'];
+
+		echo send_username_email($authId);
 	}
 }
 
@@ -70,9 +87,6 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET'){
 * @param string $pass : String representation of the user's password.
 */
 function log_in($authId, $ident, $pass){
-
-	// TODO: Make logging in go through the actual auth table
-	// with hashing checks, etc.
 
 	$conn = getConnection();
 
@@ -195,9 +209,11 @@ function log_out(){
 * @param int $id : id of individual to register
 * @param string $email : email address of the individual to register
 * @param string $password : password for the account
+* @param string $fname : first name of the registrant
+* @param string $lname : last name of the registrant
 *
 */
-function register($type, $id, $email, $password){
+function register($type, $id, $email, $password, $fname, $lname){
 
 	$conn = getConnection();
 	$guid = GUID();
@@ -208,30 +224,30 @@ function register($type, $id, $email, $password){
 
 	if($type == 'diver'){
 		$diverId = $id;
-		$query = sprintf("SELECT * FROM %s WHERE email='%s'",
-			DIVERS_TABLE,
-			mysql_real_escape_string($email));
+		/*$query = sprintf("SELECT * FROM %s WHERE diverId='%s'",
+			AUTH_TABLE,
+			mysql_real_escape_string($diverId));
 		$result = mysql_query($query, $conn);
 
 		if(!$result){
 			$errMsg = "Error fetching diver entry: " . mysql_error($conn);
 			mysql_close($conn);
 			throw new Exception($errMsg);
-		}
+		}*/
 	} else if($type == 'coach'){
 		$coachId = $id;
 	}
 
 	// No duplicate entries for auth
-	if(mysql_fetch_assoc($result) == ""){
+	//if(mysql_fetch_assoc($result) == ""){
 		$query = sprintf("INSERT INTO %s(diverId, coachId, password, GUID, active)
-			VALUES('%s', '%s', '%s', '%s', '%d')",
+			VALUES('%s', '%s', '%s', '%s', %s)",
 			AUTH_TABLE,
 			mysql_real_escape_string($diverId),
 			mysql_real_escape_string($coachId),
 			mysql_real_escape_string(encrypt($password)),
-			GUID(),
-			0);
+			$guid,
+			'0');
 
 		$result = mysql_query($query, $conn);
 		if(!$result){
@@ -242,13 +258,13 @@ function register($type, $id, $email, $password){
 		$userId = mysql_insert_id($conn);
 		mysql_close($conn);
 
-		$success = 'success';//sendConfirmEmail($userId, $email, $guid, $fname, $lname);
+		$success = sendConfirmEmail($userId, $email, $guid, $fname, $lname);
 
 		return $success;
-	}
+	/*}
 	else{
 		return "existing";
-	}
+	}*/
 }
 
 /*
@@ -284,32 +300,32 @@ function sendConfirmEmail($userId, $email, $guid, $fname, $lname){
 	$mail = new PHPMailer();
 	$mail->IsSMTP();
 	$mail->SMTPAuth = true;
-	$mail->Username="";
-	$mail->Password="";
-	$webmaster_email = "";
+	$mail->Username="upstatediving@gmail.com";
+	$mail->Password="Jongos01";
+	$webmaster_email = "upstatediving@gmail.com";
 	
 	$mail->From = $webmaster_email;
-	$mail->FromName = "The Sandbox Playground";
+	$mail->FromName = "Upstate Diving";
 	$mail->AddAddress($email);
-	$mail->AddReplyTo($webmaster_email, "The Sandbox Playground");
+	$mail->AddReplyTo($webmaster_email, "Upstate Diving");
 	$mail->WordWrap = 50;
 	$mail->IsHTML(true);		
 
-	$subject = "The Sandbox Playground Account - Confirmation";
+	$subject = "Upstate Diving - Account Confirmation"; // TODO: Change account confirmation link to the real URL
 	$body = "<p>Dear $fname $lname,</p>
-			<br /><p>Thank you for registering as a user of The Sandbox Playground!\n\n
+			<br /><p>Thank you for registering as a user of Dive Trainer!\n\n
 			Please follow this confirmation address to finalize your account creation,
-			and have full access to our web services: <a href='http://localhost/Sandbox/confirmAccount.php?userId=$userId&&guid=$guid'>
-			http://localhost/Sandbox/confirmAccount?userId=$userId&&guid=$guid</a>
+			and have full access to our web services: <a href='http://localhost/Dive_Trainer/confirmAccount.php?userId=$userId&guid=$guid'>
+			http://localhost/Dive_Trainer/confirmAccount?userId=$userId&&guid=$guid</a>
 			</p><br /><br />
 			<p>Sincerely,</p>
-			<p>The Sandbox Playground</p>";
-	$altBody = "Dear Sandbox User,\n
-			Thank you for registering as a user of The Sandbox Playground!\n\n
+			<p>Upstate Diving</p>";
+	$altBody = "Dear Upstate Diving User,\n
+			Thank you for registering as a user of Dive Trainer!\n\n
 			Please follow this confirmation address to finalize your account creation,
-			and have full access to our web services: http://localhost/Sandbox/confirmAccount.php?userId=$userId&&guid=$guid\n\n\n
+			and have full access to our web services: http://localhost/Dive_Trainer/confirmAccount.php?userId=$userId&guid=$guid\n\n\n
 			Sincerely,\n
-			The Sandbox Playground";
+			Upstate Diving";
 
 	$mail->Subject = $subject;
 	$mail->Body = $body;
@@ -321,6 +337,143 @@ function sendConfirmEmail($userId, $email, $guid, $fname, $lname){
 	else{
 		echo "failure";
 	}
+}
+
+/**
+* sendUsernameEmail
+*
+* Function to send a username info email to a user including a link to a
+* the login page.
+*
+* @param int $authId : The id to retrieve information with
+*
+* @return string : 'success' if the confirmation email was sent successfully
+*				   'failure' if the confirmation email was not sent successfully
+*
+*/
+function send_username_email($authId){
+
+	$conn = getConnection();
+	// Get the diverId of the auth row
+	$query = sprintf("SELECT * FROM %s WHERE authId=%s",
+		AUTH_TABLE,
+		$authId);
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error fetching auth information";
+		throw new Exception($message);
+	}
+
+	$row = mysql_fetch_assoc($result);
+
+	if($row != null || $row != ''){
+
+		// Get the diver info from the diver row
+		$query = sprintf("SELECT * FROM %s WHERE diverId=%s",
+			DIVERS_TABLE,
+			$row['diverId']);
+		$result = mysql_query($query, $conn);
+		$row = mysql_fetch_assoc($result);
+
+		$fname = $row['fname'];
+		$lname = $row['lname'];
+		$email = $row['email'];
+		$diverId = $row['diverId'];
+
+		$mail = new PHPMailer();
+		$mail->IsSMTP();
+		$mail->SMTPAuth = true;
+		$mail->Username="upstatediving@gmail.com";
+		$mail->Password="Jongos01";
+		$webmaster_email = "upstatediving@gmail.com";
+		
+		$mail->From = $webmaster_email;
+		$mail->FromName = "Upstate Diving";
+		$mail->AddAddress($email);
+		$mail->AddReplyTo($webmaster_email, "Upstate Diving");
+		$mail->WordWrap = 50;
+		$mail->IsHTML(true);		
+
+		$subject = "Upstate Diving - Login Info"; // TODO: Change account confirmation link to the real URL
+		$body = "<p>Dear $fname $lname,</p>
+				<br /><p>Your Dive Trainer account has been activated!\n\n
+				Your username for logging in is: d$diverId\n
+				You can now log in to start tracking your dives!\n
+				<a href='http://localhost/Dive_Trainer/index.php'>
+				http://localhost/Dive_Trainer/index.php</a>
+				</p><br /><br />
+				<p>Sincerely,</p>
+				<p>Upstate Diving</p>";
+		$altBody = "Dear $fname $lname,\n
+				Your Dive Trainer account has been activated!\n\n
+				Your username for logging in is: d$diverId\n
+				You can now log in to start tracking your dives!\n
+				http://localhost/Dive_Trainer/index.php\n\n\n
+				Sincerely,\n
+				Upstate Diving";
+
+		$mail->Subject = $subject;
+		$mail->Body = $body;
+		$mail->AltBody = $altBody;
+
+		if($mail->Send()){
+			echo "success";
+		}
+		else{
+			echo "failure";
+		}
+	}
+}
+
+/**
+* activate_account
+*
+* Set a user account to active.
+* If the user doesn't exist, or the account is already active,
+* return a friendly error.
+*
+* @param int $authId : auth row id
+* @param string $GUID : unique identifier for user verification
+*/
+function activate_account($authId, $GUID){
+
+	$conn = getConnection();
+
+	// Check for existing, activated accounts, or none
+	$query = sprintf("SELECT * FROM %s WHERE authId=%s AND GUID='%s'",
+		AUTH_TABLE,
+		mysql_real_escape_string($authId),
+		$GUID);
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error checking existing accounts:$type, userId:$userId, guid:$GUID";
+		throw new Exception($message);
+	}
+
+	$row = mysql_fetch_assoc($result);
+	// If there is no result, return an error
+	if($row == null || $row == '')
+		return 'none';
+	// If the user is already set to active, return an error
+	else if($row['active'] == '1')
+		return 'already';
+
+	// If all is clear, update the user to active
+	$query = sprintf("UPDATE %s SET active='1' WHERE authId=%s AND GUID='%s'",
+		AUTH_TABLE,
+		mysql_real_escape_string($authId),
+		$GUID);
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error activating account authId:$authId, guid:$GUID";
+		throw new Exception($message);
+	}
+
+	// Return success if 1 row was changed
+	return mysql_affected_rows($conn) == 1 ? 'success' : 'failure';
 }
 
 /**

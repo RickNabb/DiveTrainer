@@ -31,9 +31,9 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	* Create diver method
 	**/
 	if($_POST['method'] == 'create_diver' && isset($_POST['fname']) && 
-		isset($_POST['lname']) && isset($_POST['coachId'])) {
+		isset($_POST['lname']) && isset($_POST['coachId']) && isset($_POST['email'])) {
 		
-		$value = create_diver($_POST['coachId'], $_POST['fname'], $_POST['lname']);
+		$value = create_diver($_POST['coachId'], $_POST['fname'], $_POST['lname'], $_POST['email']);
 		
 		// If the insertion failed echo empty message for error
 		if ($value == '') {
@@ -109,6 +109,13 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 
 		echo json_encode($result);
 	}
+	else if($method == 'get_divers_by_level') {
+
+		$level = $_GET['level'];
+		$result = get_divers_by_level($level);
+
+		echo json_encode($result);
+	}
 	else if($method == 'get_diver_practices') {
 		if (isset($_GET['diverId'])) {
 			$id = $_GET['diverId'];
@@ -128,10 +135,11 @@ else if($_SERVER['REQUEST_METHOD'] == "GET"){
 * @param int $coachId : ID of this diver's coach
 * @param string $fname : First name of the diver
 * @param Date $lname : Last name of the diver
+* @param string $email : Email address of the diver
 *
 * @return int id : id associated with the newly entered row
 **/
-function create_diver($coachId, $fname, $lname){
+function create_diver($coachId, $fname, $lname, $email){
 	$conn = getConnection();
 	
 	// Check if coach exists
@@ -152,12 +160,13 @@ function create_diver($coachId, $fname, $lname){
 	}
 	else {
 		// Attempt to add diver
-		$query = sprintf('INSERT INTO %s (fname, lname, coachId)
-			VALUES ("%s", "%s", "%s")',
+		$query = sprintf('INSERT INTO %s (fname, lname, coachId, email)
+			VALUES ("%s", "%s", "%s", "%s")',
 			mysql_real_escape_string(DIVERS_TABLE),
 			mysql_real_escape_string($fname),
 			mysql_real_escape_string($lname),
-			mysql_real_escape_string($coachId));
+			mysql_real_escape_string($coachId),
+			mysql_real_escape_string($email));
 
 		$result = mysql_query($query, $conn);
 		
@@ -290,6 +299,27 @@ function get_divers_by_name($name){
 		DIVERS_TABLE,
 		mysql_real_escape_string($name),
 		mysql_real_escape_string($name));
+
+	$result = mysql_query($query, $conn);
+	if(!$result){
+		$message = "Error getting divers";
+		throw new Exception($message);
+	}
+
+	$rows = array();
+	while($row = mysql_fetch_assoc($result)){
+		$rows[] = $row;
+	}
+
+	return $rows;
+}
+
+function get_divers_by_level($level){
+
+	$conn = getConnection();
+	$query = sprintf("SELECT * FROM %s WHERE level=%s",
+		DIVERS_TABLE,
+		mysql_real_escape_string($level));
 
 	$result = mysql_query($query, $conn);
 	if(!$result){

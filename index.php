@@ -64,6 +64,17 @@
 		</div>
 		<?php } ?>
 
+		<!-- Register existing check -->
+		<?php if(isset($_GET['register']) && $_GET['register'] == 'existing') { ?>
+		<div class="row row-offset-sm">
+			<div class="col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-12 col-md-11 col-lg-11">
+				<div class="alert alert-warning">
+					<?php echo '<p>This email has already been registered.</p>'; ?>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
 		<!-- Register failure check -->
 		<?php if(isset($_GET['register']) && $_GET['register'] == 'failure') { ?>
 		<div class="row row-offset-sm">

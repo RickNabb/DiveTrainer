@@ -5,8 +5,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 	<?php include("include.php"); 
-		require_once("./bootstrap.php");
-	?>
+		require_once("./bootstrap.php"); ?>
 
 	<script>
 		$( document ).ready( load_divers );
@@ -197,6 +196,12 @@
 						<h4 class="modal-title" id="diversModalLabel">Select Divers</h4>
 					</div>
 					<div class="modal-body">
+						<div class="col-xs-10 col-sm-10">
+							<input type="text" placeholder="Search" id="search" class="form-control" />
+						</div>
+						<div class="col-xs-1 col-sm-1" style="padding: 0;">
+							<button class="btn btn-default" onclick="search_divers();"><span class="glyphicon glyphicon-search"></span></button>
+						</div>
 						<form id="diver_form" name="diver_form">
 						</form>
 					</div>
