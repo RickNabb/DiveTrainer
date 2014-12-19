@@ -8,7 +8,7 @@
 			include("common/exercise.php");
 			session_start();
 			// TODO: if Cliff isn't id 1000 change this
-			if(!isset($_SESSION['dive_trainer']['userId']) || $_SESSION['dive_trainer']['userId'] != 1000 ){
+			if(!isset($_SESSION['dive_trainer']['userId']) || !($_SESSION['dive_trainer']['userId'] == 1000 && $_SESSION['dive_trainer']['isAdmin'])){
 				
 				header('Location: auth_error.php');
 			}

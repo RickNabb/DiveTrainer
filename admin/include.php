@@ -1,6 +1,6 @@
 <?php require("bootstrap.php");
 	session_start();
-	if(!isset($_SESSION['dive_trainer']['userId']) || $_SESSION['dive_trainer']['userId'] == NULL){
+	if(!isset($_SESSION['dive_trainer']['userId']) || $_SESSION['dive_trainer']['userId'] == NULL || !$_SESSION['dive_trainer']['isAdmin']){
 		
 		header('Location: ../auth_error.php');
 	}
