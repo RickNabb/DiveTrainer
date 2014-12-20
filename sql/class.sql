@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.1.6
+-- version 4.2.7.1
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 19, 2014 at 01:40 AM
--- Server version: 5.6.16
--- PHP Version: 5.5.9
+-- Generation Time: Dec 20, 2014 at 03:26 AM
+-- Server version: 5.6.20
+-- PHP Version: 5.5.15
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
@@ -28,8 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE IF NOT EXISTS `class` (
   `level` int(11) NOT NULL,
-  `title` varchar(50) NOT NULL,
-  PRIMARY KEY (`level`)
+  `title` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -42,7 +41,18 @@ INSERT INTO `class` (`level`, `title`) VALUES
 (3, 'FIRE'),
 (4, 'Blaze'),
 (5, 'Elite'),
-(6, 'College');
+(6, 'College'),
+(7, 'General');
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `class`
+--
+ALTER TABLE `class`
+ ADD PRIMARY KEY (`level`);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
