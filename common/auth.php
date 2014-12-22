@@ -93,7 +93,7 @@ function log_in($authId, $ident, $pass){
 	if($ident == 'c'){		
 	
 		// Check if coach exists
-		$query = sprintf("SELECT COUNT(*) FROM %s where coachId='%s' AND password='%s'",
+		$query = sprintf("SELECT COUNT(*) FROM %s where coachId='%s' AND password='%s' AND active=1",
 			AUTH_TABLE,
 			mysql_real_escape_string($authId),
 			encrypt($pass));
@@ -113,7 +113,7 @@ function log_in($authId, $ident, $pass){
 	}
 	else if($ident == 'd'){
 		// Check if diver exists
-		$query = sprintf("SELECT COUNT(*) FROM %s where diverId='%s' AND password='%s'",
+		$query = sprintf("SELECT COUNT(*) FROM %s where diverId='%s' AND password='%s' AND active=1",
 			AUTH_TABLE,
 			mysql_real_escape_string($authId),
 			encrypt($pass));

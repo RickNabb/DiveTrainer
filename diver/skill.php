@@ -22,9 +22,18 @@
 					dataType: "json"
 				}).success(function(data) {
 					
-					$("#name").text(data.name);
+					if(data.name == ''){
+						$("#name").text("(No name given)");
+					} else {
+						$("#name").text(data.name);
+					}
 					$("#level").text("Level " + data.level);
-					$("#description").text(data.description);
+					if(data.description == ''){
+						$("#description").text("(No description given)");
+					}
+					else{
+						$("#description").text(data.description);
+					}
 					$("#video_link").attr("href", data.videoURL);
 					if(data.videoURL == '')
 						$("#video_link").text("http://youtube.com/upstatenydiving/");
@@ -44,7 +53,8 @@
 </head>
 <body>
 
-	<?php include('../common/header.php'); echo_header('View Skill', true, './skills.php', '-sm'); ?>
+	<?php include('../common/header.php'); echo_header('View Skill', true, 
+	 isset($_GET['retURL']) ? $_GET['retURL'] : './skills.php', '-sm'); ?>
 
 	<div class="nav-offset"></div>
 
@@ -76,7 +86,7 @@
 		<ul>
 			<li><a href="./index.php"><span class="glyphicon glyphicon-home"></span><p>Home</p></a></li>
 			<li><a href="./goals.php"><span class="glyphicon glyphicon-user"></span><p>Goals</p></a></li>
-			<li><a href="./skills.php"><span class="glyphicon glyphicon-list"></span><p>Skills</p></a></li>
+			<li class="current"><span class="glyphicon glyphicon-list"></span><p>Skills</p></li>
 		</ul>
 	</div>
 </body>

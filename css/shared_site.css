@@ -15,6 +15,7 @@
 		border-top: 1px solid #ddd;
 		border-bottom: 1px solid #ddd;
 		padding: 5px;
+		position: relative;
 	}
 
 	.adminHomeItem.current{
@@ -38,12 +39,15 @@
 
 	.adminHomeItem span{
 		display: inline-block;
-		float: right;
-		padding-right: 20px;
-		color: #999;
+		color: #FF8D27;
 		font-size: 20px;
-		vertical-align: middle;
 		padding-top: 20px;
+		position: absolute;
+		right: 30px;
+	}
+
+	.adminHomeItem p{
+		padding-left: 10px;
 	}
 
 	.navbar-title{
@@ -248,6 +252,10 @@
 	}
 
 	a{
+		color: #8CC63F;
+	}
+
+	li a{
 		color: #999;
 	}
 
@@ -351,6 +359,14 @@
 		font-size: 20px;
 		border:none;
 	}
+}
+
+/** LOGIN **/
+
+.title-graphic{
+	background-image: url('../img/Dive_Trainer_Logo_cut.png');
+	width: 100%;
+	height: 100%;
 }
 
 /* ADMIN */

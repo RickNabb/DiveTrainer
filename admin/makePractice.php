@@ -8,12 +8,18 @@
 
 	<script>
 	
-		$(document).ready(load_exercises);
+		window.onload = function(){
+
+			load_exercises();
+			load_filters();
+		}
 	
 		function load_exercises() {
-			var types = ["safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m"];
+			var types = ["safetyeducation", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m", 
+				"warmup", "skills", "conditioning", "flexibility"];
 			
 			for (var j = 0; j < types.length; j++) {
+
 				$.ajax({
 					type: "GET",
 					url: "../common/exercise.php",
@@ -21,17 +27,59 @@
 							type : types[j] },
 					dataType: "json"
 				}).success(function(data) {
-					for (var i = 0; i < data.exercises.length; i++) {
-						$("#" + data.type + "_form").append(
-							'<div class="row">' +
-								'<div class="col-sm-offset-2 col-xs-offset-2">' +
-									'<input type="checkbox" id="' + data.exercises[i].exerciseId + '" value="' + data.exercises[i].name + ' ' + data.exercises[i].level + '">&nbsp;' + data.exercises[i].name +'</input>' +
-								'</div>' +
-							'</div>');
+
+					if(data.length > 0){
+						var type = data[0].type;
+
+						if(type == "safetyeducation")
+							type = "warmup";
+
+						else if(type == "trampoline" || type == "dryboard" || type=="platform"
+							|| type == "deck-mat-bulkhead" || type == "1m" || type == "3m"){
+							type = "skills";
+						}
+
+						for (var i = 0; i < data.length; i++) {
+							$("#" + type + "_form").append(
+								'<div class="row">' +
+									'<div class="col-sm-offset-1 col-xs-offset-1">' +
+										'<input type="checkbox" ex_type="' + data[i].type + '" id="' + data[i].exerciseId + '" value="' + data[i].name 
+										+ ' ' + data[i].level + '">&nbsp;' + data[i].name +'</input>' +
+									'</div>' +
+								'</div>');
+						}
+					}
+					else{
+						// Nothing
 					}
 				}).error(function(data){
 					console.log(data);
 				});
+			}
+		}
+
+		function load_filters(){
+
+			var types = ["warmup", "skills", "conditioning", "flexibility"];
+			for(var i = 0; i < types.length; i++){
+
+				if(types[i] == "warmup"){
+					$("#warmup_filter").append("<option value='all'>All Warmups</option>");
+					$("#warmup_filter").append("<option value='safetyeducation'>Safety Education</option>");
+					$("#warmup_filter").append("<option value='warmup'>Warm Ups</option>");
+				}
+				else if(types[i] == "skills"){
+					$("#skills_filter").append("<option value='all'>All Skills</option>");
+					$("#skills_filter").append("<option value='trampoline'>Trampoline</option>");
+					$("#skills_filter").append("<option value='dryboard'>Dryboard</option>");
+					$("#skills_filter").append("<option value='platform'>Platform</option>");
+					$("#skills_filter").append("<option value='deck-mat-bulkhead'>Deck/Mat</option>");
+					$("#skills_filter").append("<option value='1m'>1m Dive</option>");
+					$("#skills_filter").append("<option value='3m'>3m Dives</option>");
+				}
+				else{
+					$("#" + types + "_filter").hide();
+				}
 			}
 		}
 	
@@ -75,23 +123,66 @@
 			$("#" + section + "_form :input").each(function(){
 				if(this.checked){
 					$("#" + section + "_exercises_list").append("<div class='row row-offset-xs'><div class='col-sm-offset-1 col-xs-offset-2'>"+
-						"<button id='exercise" + this.id + "' class='btn btn-default' onclick='remove_skill(" + '"' + section + '"' + ", " + '"'
-						 + this.value + '"' + ");'>" + this.value + 
+						"<button id='exercise" + this.id + "' class='btn btn-default col-xs-10 col-sm-10' style='white-space: normal;' onclick='remove_skill(" + '"' + section + '"' + ", " + '"'
+						 + this.value + '"' + ");'>" + this.value.substring(0, this.value.length - 2) + 
 						"<span class='glyphicon glyphicon-minus-sign' style='color: red; margin-left: 10px;'></span></button></div></div>");
 				}
 			});
 		}
 
 		function remove_skill(section, value){
-			alert("remove_skill");
-			var button = $("#" + section + "_exercises_list button:contains('" + value + "')");
+			var button = $("#" + section + "_exercises_list button:contains('" + value.substring(0, value.length - 2) + "')");
 			$("#" + section + "_form input[id*='" + button[0].id.substring(8) + "']")[0].checked = false;
 			button.remove();
 
 			if($("#" + section + "_exercises_list > div > div").children().size() == 0){
-				alert("empty");
 				$("#" + section + "_exercises_list > div > div").append("<p>There is nothing here. Add an exercise!</p>");
 			}
+		}
+
+		function search_modal(section){
+
+			$("#" + section + "_form > div").css("display", "none");
+
+			if($("#" + section + "_search").val() == ''){
+				filter_divers();
+			}
+			else{
+
+				$("#ajax_loader").show();
+
+				$("#" + section + "_form > div > div > input").each(function(){
+					if($(this).val().toLowerCase().indexOf($("#" + section + "_search").val()) > -1){
+
+						$(this).parent().parent().css("display", "block");
+					}
+				});
+
+				$("#ajax_loader").hide();
+			}
+		}
+
+		function filter_modal(section){
+
+			$("#ajax_loader").show();
+
+			if($("#" + section + "_filter option:selected").attr("value") == "all"){
+				$("#" + section + "_form > div").each(function(){
+					$(this).show();
+				});
+			}
+			else{
+				$("#" + section + "_form > div").css("display", "none");
+
+				$("#" + section + "_form > div > div > input").each(function(){
+					if($(this).attr("ex_type") == $("#" + section + "_filter option:selected").attr("value")){
+
+						$(this).parent().parent().css("display", "block");
+					}
+				});
+			}
+
+			$("#ajax_loader").hide();
 		}
 
 	</script>
@@ -107,29 +198,39 @@
 		<!-- Exercises Modals --> <!-- TODO: Use one modal and dynamically switch content (?) -->
 		
 		<?php
-		$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
+			$types = array("warmup", "skills", "conditioning", "flexibility");
 		
-		foreach ($types as $type) {
-			echo '<div class="modal fade" id="' . $type . 'Modal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-							<h4 class="modal-title" id="skillsModalLabel">Select Exercises</h4>
-						</div>
-						<div class="modal-body">
-							<form id="' . $type . '_form" name="' . $type . '_form">
-							</form>
-						</div>
-						<div class="modal-footer"><button class="btn btn-default" data-dismiss="modal">Cancel</button>
-							<button type="button" class="btn btn-primary" onclick="add_skills(\'' . $type . '\');" data-dismiss="modal">Add Exercises</button>
-						</div>
-					</div><!-- /.modal-content -->
-				</div><!-- /.modal-dialog -->
-			</div><!-- /.modal -->
-			
-			';
-		}
+			foreach ($types as $type) {
+				echo '<div class="modal fade" id="' . $type . 'Modal" data-toggle="modal" role="dialog" arialabelledby="skillsModalLabel" aria-hidden="true" style="max-height: 90%;">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title" id="skillsModalLabel">Select Exercises</h4>
+							</div>
+							<div class="modal-body">
+								<div class="row" style="padding-bottom: 20px;">
+									<div class="col-xs-4 col-sm-4">
+										<select id="' . $type . '_filter" class="pull-left filter" onchange="filter_modal(\'' . $type . '\');"></select>
+									</div>
+									<div class="col-xs-10 col-sm-10">
+										<input type="text" placeholder="Search" id="' . $type . '_search" class="form-control" />
+									</div>
+									<div class="col-xs-1 col-sm-1" style="padding: 0;">
+										<button class="btn btn-default" onclick="search_modal(\'' . $type . '\');"><span class="glyphicon glyphicon-search"></span></button>
+									</div>
+								</div>
+								<div id="ajax_loader" class="ajax-loader loader-lg center"></div>
+								<form id="' . $type . '_form" name="' . $type . '_form">
+								</form>
+							</div>
+							<div class="modal-footer"><button class="btn btn-default" data-dismiss="modal">Cancel</button>
+								<button type="button" class="btn btn-primary" onclick="add_skills(\'' . $type . '\');" data-dismiss="modal">Add Exercises</button>
+							</div>
+						</div><!-- /.modal-content -->
+					</div><!-- /.modal-dialog -->
+				</div><!-- /.modal -->';
+			}
 		?>
 
 		<div class="row row-offset-sm">
@@ -161,9 +262,9 @@
 		</div>
 
 		<?php
-			$titles = array("Safety Education", "Warm Up","Conditioning", "Flexibility", "Trampoline", "Dryboard", "Platform", "Deck/Mat/Bulkhead", "1m", "3m");
+			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
 			
-			$types = array("safetyeducation", "warmup", "conditioning", "flexibility", "trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
+			$types = array("warmup", "skills", "conditioning", "flexibility");
 			
 			for ($i = 0; $i < count($titles); $i++) {
 				echo '<!-- ' . $titles[$i] . ' Section -->

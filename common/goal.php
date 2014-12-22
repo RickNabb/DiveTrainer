@@ -50,9 +50,10 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			echo $goalId;
 		}
 	}
-	else if($method == 'create_exercise_to_goal' && isset($_POST['goalId']) && isset($_POST['skills'])) {
+	else if($method == 'create_exercise_to_goal' && isset($_POST['goalId']) && isset($_POST['skill_ids'])
+		&& isset($_POST['desired_ratings'])) {
 
-		$result = create_exercise_to_goal($_POST['goalId'], $_POST['skills']);
+		$result = create_exercise_to_goal($_POST['goalId'], $_POST['skill_ids'], $_POST['desired_ratings']);
 		echo ($result == 1 ? 'success' : 'failure');
 	}
 	else {
@@ -133,18 +134,18 @@ function create_goal($diverId, $name, $startDate_str, $endDate_str){
 	return mysql_insert_id($conn);
 }
 
-function create_exercise_to_goal($goalId, $skills){
+function create_exercise_to_goal($goalId, $skill_ids, $desired_ratings){
 
 	$conn = getConnection();
 
-	foreach($skills as $exerciseId => $desiredRating){
+	for($i = 0; $i < sizeof($skill_ids); $i++){
 
 		$query = sprintf("INSERT INTO %s (exerciseId, goalId, desiredRating, rating)
 			VALUES ('%s', '%s', '%s', '%s')",
 				EXERCISE_TO_GOAL_TABLE,
-				mysql_real_escape_string($exerciseId),
+				mysql_real_escape_string($skill_ids[$i]),
 				mysql_real_escape_string($goalId),
-				mysql_real_escape_string($desiredRating),
+				mysql_real_escape_string($desired_ratings[$i]),
 				'1');
 		$result = mysql_query($query, $conn);
 

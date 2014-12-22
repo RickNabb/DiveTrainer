@@ -73,43 +73,24 @@
 
 		function search_divers(){
 
-			// TODO: Take into account the fact that a filter might be applied
-
-			$("#diver_list").empty();
+			$("#diver_list > div").css("display", "none");
 
 			if($("#search").val() == ''){
 
-				loadDivers();
+				filter_divers();
 			}
 			else{
+
 				$("#ajax_loader").show();
 
-				$.ajax({
-					type: "GET",
-					url: "../common/diver.php",
-					data: {
-						method: "get_divers_by_name",
-						name: $("#search").val()
-					},
-					dataType: "json"
-				}).success(function(data){
+				$("#diver_list > div > div > a > h4").each(function(){
+					if($(this).text().toLowerCase().indexOf($("#search").val()) > -1){
 
-					for(var i = 0; i < data.length; i++){
-						$("#diver_list").append("<div class='row'><div class='adminHomeItem'><a href='./diver.php?id="
-							+ data[i].diverId + "'><h4>" + data[i].fname + " " + data[i].lname + "</h4></a></div></div>");
+						$(this).parent().parent().parent().css("display", "block");
 					}
-					$("#ajax_loader").hide();
-
-				}).error(function(data){
-
-					$("#diver_list").append('<div class="row">');
-					$("#diver_list > div").append('<div class="col-sm-offset-1 col-xs-offset-1">');
-					$("#diver_list > div > div").append('<h3>Sorry!</h3>');
-					$("#diver_list > div > div").append('<h4>We couldn\'t load all of the divers.' + 
-						' Please try again.</h4></div></div>');
-
-					$("#ajax_loader").hide();
 				});
+
+				$("#ajax_loader").hide();
 			}
 		}
 

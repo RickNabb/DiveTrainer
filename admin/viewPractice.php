@@ -54,7 +54,23 @@
 					
 					// Exercises
 					for (var i = 0; i < data.exercises.length; i++) {
-						$("#insert_exercises").append("<label class=\"formLabel col-sm-offset-1 col-xs-offset-1\">" + data.exercises[i].name + "</label><br>");
+						if(data.exercises[i].type == "warmup" || data.exercises[i].type == "safetyeducation"){
+							$("#warmup_section").show();
+							$("#warmup_section").append("<div class='row'><div class='col-xs-offset-2 col-sm-offset-2'><a href='./skill.php?id="
+								+ data.exercises[i].exerciseId + "&retURL=viewPractice.php?practiceId=" + <?php echo $_GET['practiceId']; ?> + "'><p class='fgOrange'>" + data.exercises[i].name + "</p></a></div></div>");
+						}
+						else if(data.exercises[i].type == "trampoline" || data.exercises[i].type == "dryboard"
+							|| data.exercises[i].type == "platform" || data.exercises[i].type == "deck-mat-bulkhead"
+							|| data.exercises[i].type == "1m" || data.exercises[i].type == "3m"){
+							$("#skills_section").show();
+							$("#skills_section").append("<div class='row'><div class='col-xs-offset-2 col-sm-offset-2'><a href='./skill.php?id="
+								+ data.exercises[i].exerciseId + "&retURL=viewPractice.php?practiceId=" + <?php echo $_GET['practiceId']; ?> + "'><p class='fgOrange'>" + data.exercises[i].name + "</p></a></div></div>");
+						}
+						else{
+							$("#" + data.exercises[i].type + "_section").show();
+							$("#" + data.exercises[i].type + "_section").append("<div class='row'><div class='col-xs-offset-2 col-sm-offset-2'><a href='./skill.php?id="
+								+ data.exercises[i].exerciseId + "&retURL=viewPractice.php?practiceId=" + <?php echo $_GET['practiceId']; ?> + "'><p class='fgOrange'>" + data.exercises[i].name + "</p></a></div></div>");
+						}
 					}
 					
 					// Divers
@@ -227,8 +243,28 @@
 			<h4 id="date" class="formLabel col-sm-offset-1 col-xs-offset-1"></h4>
 		</div>
 		
-		<div class="row row-offset-sm" id="insert_exercises">
-		</div>
+		<?php
+			$titles = array("Warm Up", "Skills", "Conditioning", "Flexibility");
+			
+			$types = array("warmup", "skills", "conditioning", "flexibility");
+			
+			for ($i = 0; $i < count($titles); $i++) {
+				echo '<!-- ' . $titles[$i] . ' Section -->
+					<div id="' . $types[$i] . '_section" style="display: none;" class="row row-offset-sm">
+						<div class="col-xs-offset-1">
+							<h4>' . $titles[$i] . '</h4>
+						</div>
+						<div class="col-xs-11 col-sm-11">
+							<hr />
+						</div>
+						<div id="' . $types[$i] . '_exercises_list" class="row">
+							<div class="col-sm-offset-1 col-xs-offset-1"></div>
+						</div>
+					</div>
+					<!-- End ' . $titles[$i] . ' Section -->';
+			}
+
+		?>
 
 		<div class="row row-offset-sm">
 			<div class="col-sm-offset-1 col-xs-offset-1 col-sm-4 col-xs-4">
@@ -237,10 +273,13 @@
 			<div class="col-sm-offset-9 col-xs-offset-9">
 				<span class="glyphicon glyphicon-plus-sign addButtonSm fgGreen" style="padding-top: 10px;" data-toggle="modal" data-target="#diversModal"/>
 			</div>
+			<div class="col-xs-11 col-sm-11">
+				<hr />
+			</div>
 		</div>
 		
 		<div id="divers_list" class="row">
-			<div class="col-sm-offset-1 col-xs-offset-2">
+			<div class="col-sm-offset-1 col-xs-offset-1">
 				<p>No divers are currently scheduled to attend.</p>
 			</div>
 		</div>

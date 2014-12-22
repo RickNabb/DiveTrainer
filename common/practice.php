@@ -84,6 +84,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 }
 else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
+	session_start();
+
 	// Get the deisred method from the HTTP call
 	if (isset($_GET['method'])) {
 		$method = $_GET['method'];
@@ -94,7 +96,6 @@ else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	**/
 	if($method == 'get_practice_list') {
 		$result = '';
-		session_start();
 		if ($_SESSION['dive_trainer']['userType'] == 'coach') {
 			$result = get_coach_practices($_SESSION['dive_trainer']['userId']);
 		}
@@ -126,6 +127,63 @@ else if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 		}
 		
 		echo json_encode($result);
+	}
+	else if($method == 'get_practices_filtered'){
+		// Selecting the past 5 created practices by date created
+		if($_GET['filter'] == 'last_created'){
+			if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+				echo json_encode(get_coach_practices_modified($_SESSION['dive_trainer']['userId'],
+					"", "practiceId DESC", "LIMIT 5"));
+			}
+			//TODO: get diver practices
+			else if ($_SESSION['dive_trainer']['userType'] == 'diver') {
+				echo 'diver practices';
+			}
+		}
+		// Selecting the past 10 practices by date
+		else if($_GET['filter'] == 'past10'){
+			if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+				echo json_encode(get_coach_practices_modified($_SESSION['dive_trainer']['userId'],
+					"", "date DESC", "LIMIT 10"));
+			}
+			//TODO: get diver practices
+			else if ($_SESSION['dive_trainer']['userType'] == 'diver') {
+				echo 'diver practices';
+			}
+		}
+		// Selecting the past week's practices
+		else if($_GET['filter'] == 'past_week'){
+			if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+				echo json_encode(get_coach_practices_modified($_SESSION['dive_trainer']['userId'],
+					"AND DATEDIFF(NOW(), date) < 7", "date DESC", ""));
+			}
+			//TODO: get diver practices
+			else if ($_SESSION['dive_trainer']['userType'] == 'diver') {
+				echo 'diver practices';
+			}
+		}
+		// Selecting the past month's practices
+		else if($_GET['filter'] == 'past_month'){
+			if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+				echo json_encode(get_coach_practices_modified($_SESSION['dive_trainer']['userId'],
+					"AND EXTRACT(MONTH FROM NOW())=EXTRACT(MONTH FROM date)", "date DESC", ""));
+			}
+			//TODO: get diver practices
+			else if ($_SESSION['dive_trainer']['userType'] == 'diver') {
+				echo 'diver practices';
+			}
+		}
+		// Selecting all practices
+		else if($_GET['filter'] == 'all'){
+			if ($_SESSION['dive_trainer']['userType'] == 'coach') {
+				echo json_encode(get_coach_practices_modified($_SESSION['dive_trainer']['userId'],
+					"", "date DESC", ""));
+			}
+			//TODO: get diver practices
+			else if ($_SESSION['dive_trainer']['userType'] == 'diver') {
+				echo 'diver practices';
+			}
+		}
 	}
 }
 
@@ -295,9 +353,41 @@ function update_practice($practiceId, $coachId, $title, $date, $exercises) {
 function get_coach_practices($coachId) {
 
 	$conn = getConnection();
-	$query = sprintf('SELECT practiceId, title, date FROM %s WHERE coachId = %s ORDER BY date ASC',
+	$query = sprintf('SELECT practiceId, title, date FROM %s WHERE coachId = %s ORDER BY date DESC',
 		mysql_real_escape_string(PRACTICES_TABLE),
 		mysql_real_escape_string($coachId));
+
+	$result = mysql_query($query,$conn);
+	if(!$result){
+		$message = "Error retrieving practices";
+		throw new Exception($message);
+	}
+	
+	$rows = array();
+	while(($row =  mysql_fetch_assoc($result))) {
+		$rows[] = $row;
+	}
+
+	return $rows;
+}
+
+/**
+* get_practice_list_modified
+*
+* Function to get a list of practices based on the coach
+* @param int $coachId : ID of owning coach
+*
+* @return practiceArray - an array of practice rows
+**/
+function get_coach_practices_modified($coachId, $prefix, $order, $suffix) {
+
+	$conn = getConnection();
+	$query = sprintf('SELECT practiceId, title, date FROM %s WHERE coachId = %s %s ORDER BY %s %s',
+		mysql_real_escape_string(PRACTICES_TABLE),
+		mysql_real_escape_string($coachId),
+		mysql_real_escape_string($prefix),
+		mysql_real_escape_string($order),
+		mysql_real_escape_string($suffix));
 
 	$result = mysql_query($query,$conn);
 	if(!$result){

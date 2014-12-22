@@ -9,6 +9,9 @@
 	<script>
 
 		function logIn(){
+
+			$("#login_validate").hide();
+
 			var userId = $("#inputID").val();
 			var password = $("#password").val();
 			var first_char = $("#inputID").val().substr(0, 1);
@@ -31,8 +34,7 @@
 					}
 					else{
 						if (parseInt(data) == 0) {
-							// TODO: Form validation
-							alert("Username not found")
+							$("#login_validate").show();
 						}
 					}
 				});			
@@ -87,6 +89,10 @@
 		<?php } ?>
 
 		<div class="row row-offset-md">
+			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-offset-2 
+				col-xs-8 col-sm-8 col-md-8 col-lg-8" style="display: none;" id="login_validate">
+				<p class="error">Invalid username/password. Please try again.</p>
+			</div>
 			<div class="col-sm-offset-2 col-md-offset-2 col-lg-offset-2 col-xs-offset-2 
 				col-xs-8 col-sm-8 col-md-8 col-lg-8">
 				<input type="text" class="form-control" placeholder="User ID" id="inputID"/>

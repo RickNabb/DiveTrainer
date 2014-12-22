@@ -22,9 +22,18 @@
 					dataType: "json"
 				}).success(function(data) {
 					
-					$("#name").text(data.name);
+					if(data.name == ''){
+						$("#name").text("(No name given)");
+					} else {
+						$("#name").text(data.name);
+					}
 					$("#level").text("Level " + data.level);
-					$("#description").text(data.description);
+					if(data.description == ''){
+						$("#description").text("(No description given)");
+					}
+					else{
+						$("#description").text(data.description);
+					}
 					$("#video_link").attr("href", data.videoURL);
 					if(data.videoURL == '')
 						$("#video_link").text("http://youtube.com/upstatenydiving/");
@@ -32,11 +41,10 @@
 						$("#video_link").text(data.videoURL);
 					
 				}).error(function(data){
-					$("#skill_list").append('<div class="row">');
-					$("#skill_list > div").append('<div class="col-sm-offset-1 col-xs-offset-1">');
-					$("#skill_list > div > div").append('<h3>Sorry!</h3>');
-					$("#skill_list > div > div").append('<h4>We couldn\'t load all of the skills.' + 
-						' Please try again.</h4></div></div>');
+					$("#description").parent().removeClass("well");
+					$("#description").parent().addClass("alert");
+					$("#description").parent().addClass("alert-warning");
+					$("#description").parent().append("<strong>Oops!</strong><p>There was an issue loading this skill. Please try again later.</p>");
 				});
 		}
 
@@ -44,7 +52,8 @@
 </head>
 <body>
 
-	<?php include('../common/header.php'); echo_header('View Skill', true, './skills.php', '-sm'); ?>
+	<?php include('../common/header.php'); echo_header('View Skill', true, 
+	 isset($_GET['retURL']) ? $_GET['retURL'] : './skills.php', '-sm'); ?>
 
 	<div class="nav-offset"></div>
 

@@ -33,7 +33,7 @@
 					var d2 = new Date(data.goal.endDate).toLocaleDateString("en-US");
 					
 					$("#date").text(d1 + " - " + d2);
-					$("#title").text() != "" ? $("#title").text(data.goal.name) : $("#title").text("(No title given)");
+					data.goal.name != "" ? $("#title").text(data.goal.name) : $("#title").text("(No title given)");
 					
 					if(data.skills.length > 0){
 						// Skills

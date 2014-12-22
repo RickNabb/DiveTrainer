@@ -22,7 +22,7 @@
 		<div class="nav-offset"></div>
 		<div class="row">
 			<a href="./goals.php">
-				<div class="adminHomeItem current">
+				<div class="adminHomeItem">
 					<h3>My Goals</h3>
 					<span class="glyphicon glyphicon-chevron-right"></span>
 				</div>

@@ -55,7 +55,7 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 	if($method == 'get_exercise') {
 		$result = '';
 		if (isset($_GET['exerciseId'])) {
-			$result = get_exercise($_POST['exerciseId']);
+			$result = get_exercise($_GET['exerciseId']);
 		}
 		
 		echo json_encode($result);
@@ -69,6 +69,20 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 			$result = get_exercise_type($_GET['type']);
 		}
 		
+		echo json_encode($result);
+	}
+
+	else if($method == "get_skills"){
+		$skill_types = array("trampoline", "dryboard", "platform", "deck-mat-bulkhead", "1m", "3m");
+		$result = array();
+		foreach($skill_types as $type){
+			$temp = get_exercise_type($type);
+
+			foreach($temp as $row){
+				$result[] = $row;
+			}
+		}
+
 		echo json_encode($result);
 	}
 }
@@ -210,6 +224,7 @@ function get_exercise_type($type) {
 		$result[] = $e;
 	}
 	
-	return array('exercises' => $result, 'type' => $type);
+	return $result; //array('exercises' => $result, 'type' => $type);
 }
+
 ?>
