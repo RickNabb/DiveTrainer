@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,6 +33,8 @@
 							window.location = './admin/index.php';
 						else if(first_char == 'd')
 							window.location = './diver/index.php';
+						else if(first_char == 's')
+							window.location = './superAdmin/index.php';
 					}
 					else{
 						if (parseInt(data) == 0) {

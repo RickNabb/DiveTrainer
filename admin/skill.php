@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,6 +60,34 @@
 	<div class="nav-offset"></div>
 
 	<div class="container container-fluid">
+
+		<div class="row">
+			<div class="pull-right">
+				<a href="./editSkill.php?id=<?php echo $_GET['id']; ?>"><span class="glyphicon glyphicon-edit addButton fgOrange"></span></a>
+			</div>
+		</div>
+
+		<!-- Edit success check -->
+		<?php if(isset($_GET['success']) && $_GET['success'] == 'success') { ?>
+		<div class="row row-offset-sm">
+			<div class="col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-12 col-md-11 col-lg-11">
+				<div class="alert alert-success">
+					<p>This skill has been successfully edited!</p>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
+
+		<!-- Edit failure check -->
+		<?php if(isset($_GET['success']) && $_GET['success'] == 'failure') { ?>
+		<div class="row row-offset-sm">
+			<div class="col-md-offset-1 col-lg-offset-1 col-xs-12 col-sm-12 col-md-11 col-lg-11">
+				<div class="alert alert-danger">
+					<p>Something went wrong with editing! Please try again later.</p>
+				</div>
+			</div>
+		</div>
+		<?php } ?>
 		
 		<div class="row">
 			<div class="col-xs-offset-1 col-sm-offset-1">

@@ -430,7 +430,9 @@ function get_practice($practiceId) {
 	// No practice for that id found
 	$practiceRow = mysql_fetch_assoc($practice);
 	if($practiceRow == null){
-		return array('practice' => []);	
+		$returning = array();
+		$returning['practice'] = array();
+		return $returning;	
 	}
 	
 	// Get each exercise info
@@ -480,7 +482,9 @@ function get_practice_by_date($dateString) {
 	}
 	else {
 		// Return empty practice array
-		return array('practice' => []);
+		$returning = array();
+		$returning['practice'] = array();
+		return $returning;	
 	}
 	
 	// Get each exercise info

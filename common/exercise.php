@@ -41,6 +41,18 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 		echo $result;
 	}
+	else if($method == 'edit_exercise'){
+
+		$name = $_POST['name'];
+		$level = $_POST['level'];
+		$videoURL = $_POST['videoURL'];
+		$description = $_POST['description'];
+		$exerciseId = $_POST['exerciseId'];
+
+		$result = edit_exercise($exerciseId, $name, $level, $videoURL, $description);
+
+		echo $result;
+	}
 }
 else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 
@@ -225,6 +237,43 @@ function get_exercise_type($type) {
 	}
 	
 	return $result; //array('exercises' => $result, 'type' => $type);
+}
+
+/**
+* edit_exercise
+*
+* Function to edit an exercise
+* @param int $exerciseId : ID of the exercise to edit
+* @param string $name : Name of the exercise
+* @param int $level : Difficulty level of the exercise
+* @param string $videoURL : URL of the video associated with the exercise
+* @param string $description : Description of the exercise
+*
+* @return int $rows_affected : Number of rows affected by the SQL query (should be 1)
+*/
+function edit_exercise($exerciseId, $name, $level, $videoURL, $description){
+
+	$conn = getConnection();
+	
+	// Get exercise info
+	$query = sprintf("UPDATE %s SET name='%s',level=%s, description='%s', videoURL='%s' WHERE exerciseId=%s",
+		mysql_real_escape_string(EXERCISES_TABLE),
+		mysql_real_escape_string($name),
+		mysql_real_escape_string($level),
+		mysql_real_escape_string($description),
+		mysql_real_escape_string($videoURL),
+		mysql_real_escape_string($exerciseId));
+		
+	$result = mysql_query($query,$conn);
+	
+	if(!$result){
+		$message = "Error retrieving exercise";
+		throw new Exception($message);
+	}
+	
+	$rows_affected = mysql_affected_rows($conn);
+	
+	return $rows_affected;
 }
 
 ?>

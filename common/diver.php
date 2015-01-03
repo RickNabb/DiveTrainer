@@ -198,14 +198,15 @@ function diver_exists($diverId) {
 	$conn = getConnection();
 	
 	// Check if diver exists
-	$query = sprintf('SELECT COUNT(*) FROM %s WHERE diverId = %s',
+	$query = sprintf('SELECT * FROM %s WHERE diverId = %s',
 		mysql_real_escape_string(DIVERS_TABLE),
 		mysql_real_escape_string($diverId));
 		
 	$result = mysql_query($query, $conn);
+	$row = mysql_fetch_assoc($result);
 	
 	// If no diver exists, return 0
-	if (mysql_fetch_row($result)[0] == '0') {
+	if ($row == '' || $row == null) {
 		return 0;
 	}
 	return 1;

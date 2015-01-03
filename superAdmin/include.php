@@ -1,5 +1,5 @@
 <?php require("bootstrap.php");
-	if(!isset($_SESSION['dive_trainer']['userId']) || $_SESSION['dive_trainer']['userId'] == NULL || !$_SESSION['dive_trainer']['isAdmin']){
+	if(!isset($_SESSION['dive_trainer']['userId']) || $_SESSION['dive_trainer']['userId'] == NULL || !$_SESSION['dive_trainer']['isSuperAdmin']){
 		
 		header('Location: ../auth_error.php');
 	}

@@ -23,16 +23,27 @@ require("bootstrap.php");
 ///////////////////////////////////////////////////////////////////////////////
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-	$result = '';
-	
-	/**
-	* Create coach method
-	**/
-	if($_POST['method'] == 'create_coach' && isset($_POST['coach'])) {
-		$result = create_coach($_POST['coach']);
+
+	if(isset($_POST['method'])){
+
+		$method = $_POST['method'];
 		
-		// Print out result
-		echo $result;
+		/**
+		* Create coach method
+		**/
+		if($method == 'create_coach') {
+
+			$coachId = $_POST['coachId'];
+			$fname = $_POST['fname'];
+			$lname = $_POST['lname'];
+			$email = $_POST['email'];
+			$level = $_POST['level'];
+
+			$result = create_coach($coachId, $fname, $lname, $email, $level);
+			
+			// Print out result
+			echo $result;
+		}
 	}
 }
 else if($_SERVER['REQUEST_METHOD'] == 'GET') {
@@ -55,44 +66,34 @@ else if($_SERVER['REQUEST_METHOD'] == 'GET') {
 * create_coach
 *
 * Function to create a coach and insert into the database
-* @param array $coach : A coach object with the following fields
-*			int coachId : ID number
-* 			string fname : First name
-* 			string lname : Last name
-* 			string level : Coach skill level
-* 			string address1 : Address line 1
-* 			string address2 : Address line 2
-* 			string zip : Zip-code
-* 			string phone : Phone number
-* 			string email : Email address
-* 			Date dob : Date of birth
+* @param int $coachId : ID to assign to this coach
+* @param string $fname : First name of the coach
+* @param string $lname : Last name of the coach
+* @param string $email : Email address of the coach
+* @param int $level : The level that the coach teaches
 *
 * @return int n : Number of affected rows in the sql query
 * 	n >= 1 -> Insert worked, multiple rows affected
 *	n = 0 -> Insert failed, no rows affected
 **/
-function create_coach($coach){
+function create_coach($coachId, $fname, $lname, $email, $level){
 	$conn = getConnection();
 	
 	// Attempt to add coach
-	$query = sprintf('INSERT INTO %s (fname, lname, level, address1, address2, zip, phone, email, dob)
-		VALUES ("%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s", "%s")',
-		mysql_real_escape_string(COACHS_TABLE),
-		mysql_real_escape_string($coach['fname']),
-		mysql_real_escape_string($coach['lname']),
-		mysql_real_escape_string($coach['level']),
-		mysql_real_escape_string($coach['address1']),
-		mysql_real_escape_string($coach['address2']),
-		mysql_real_escape_string($coach['zip']),
-		mysql_real_escape_string($coach['phone']),
-		mysql_real_escape_string($coach['email']),
-		mysql_real_escape_string($coach['dob']));
+	$query = sprintf('INSERT INTO %s (coachId, fname, lname, level, email)
+		VALUES ("%s", "%s", "%s", "%s", "%s")',
+		mysql_real_escape_string(COACHES_TABLE),
+		mysql_real_escape_string($coachId),
+		mysql_real_escape_string($fname),
+		mysql_real_escape_string($lname),
+		mysql_real_escape_string($level),
+		mysql_real_escape_string($email));
 
 	$result = mysql_query($query, $conn);
 	
 	// Insertion failed
 	if(!$result){
-		$message = "Error inserting practice into database";
+		$message = "Error inserting coach into database";
 		throw new Exception($message);
 	}
 
@@ -102,26 +103,29 @@ function create_coach($coach){
 /**
 * get_coach
 *
-* Function to get an exercise from the database
+* Function to get a coach from the database
 * @param int $coachId : ID of the coach
 *
-* @return coach - the coach object
+* @return row - the mysql row
 **/
 function get_coach($coachId) {
+
 	$conn = getConnection();
 	
 	// Get exercise info
 	$query = sprintf('SELECT * FROM %s WHERE coachId = %s',
-		mysql_real_escape_string(COACHES_TABLE),
+		COACHES_TABLE,
 		mysql_real_escape_string($coachId));
 		
-	$coach = mysql_query($query,$conn);
+	$result = mysql_query($query, $conn);
 	
-	if(!$coach){
-		$message = "Error retrieving exercise";
+	if(!$result){
+		$message = "Error retrieving coach";
 		throw new Exception($message);
 	}
 
-	return mysql_fetch_assoc($coach);
+	$row = mysql_fetch_assoc($result);
+
+	return $row;
 }
 ?>

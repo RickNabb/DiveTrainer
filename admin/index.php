@@ -1,3 +1,5 @@
+<?php session_start(); ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -67,9 +69,9 @@
 
 		<div id="body_mobile">
 			<div class="row">
-				<a href="./practices.php?display=today">
+				<a href="./account.php?id=<?php echo $_SESSION['dive_trainer']['userId']; ?>">
 					<div class="adminHomeItem">
-						<h3>Today's Practice</h3>
+						<h3>My Account</h3>
 						<span class="glyphicon glyphicon-chevron-right"></span>
 					</div>
 				</a>
@@ -100,7 +102,7 @@
 			</div>
 		</div>
 
-		<div id="body_tablet">
+		<!-- <div id="body_tablet">
 			<div class="row">
 				<div class="col-md-5" style="border-right: 1px solid #ddd;" id="today_practice">
 					<h1>Today's Practice</h1>
@@ -114,7 +116,7 @@
 					<h3>Current Attendence Rate: <span class="fgGreen">74%</span></h3>
 				</div>
 			</div>
-		</div>
+		</div> -->
 
 		<div class="ftr-offset"></div>
 	</div>
