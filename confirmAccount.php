@@ -57,7 +57,7 @@
 				url: "./common/auth.php",
 				data: {
 					method: "send_username_email",
-					type: <?php echo $_GET['type']; ?>,
+					type: "<?php echo $_GET['type']; ?>",
 					authId: id,
 				}
 			}).success(function(data){
