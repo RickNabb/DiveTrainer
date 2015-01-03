@@ -38,6 +38,9 @@
 				else if(data == "none"){
 					$("#none").show();
 				}
+				else if(data == "failure"){
+					$("#error").show();
+				}
 
 			}).error(function(data){
 
@@ -54,6 +57,7 @@
 				url: "./common/auth.php",
 				data: {
 					method: "send_username_email",
+					type: <?php echo $_GET['type']; ?>,
 					authId: id,
 				}
 			}).success(function(data){

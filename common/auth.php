@@ -51,10 +51,11 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 	}
 
 	else if($_POST['method'] == "send_username_email"){
-
+		
+		$type = $_POST['type'];
 		$authId = $_POST['authId'];
 
-		echo send_username_email($authId);
+		echo send_username_email($type, $authId);
 	}
 
 	else if($_POST['method'] == "change_pwd"){
@@ -357,7 +358,7 @@ function register($type, $id, $email, $password, $fname, $lname){
 		$userId = mysql_insert_id($conn);
 		mysql_close($conn);
 
-		$success = sendConfirmEmail($userId, $email, $guid, $fname, $lname);
+		$success = sendConfirmEmail($userId, $type, $email, $guid, $fname, $lname);
 
 		return $success;
 	/*}
@@ -386,6 +387,7 @@ function GUID()
 * the confirmation page.
 *
 * @param int $userId : The userId to stick in the confirmation link
+* @param string $type : The type of user being registered ('coach' or 'diver')
 * @param string $email : The email address to send the message to
 * @param string $guid : A unique identifier for user confirmation
 * @param string $fname : The first name of the user
@@ -395,21 +397,21 @@ function GUID()
 *				   'failure' if the confirmation email was not sent successfully
 *
 */
-function sendConfirmEmail($userId, $email, $guid, $fname, $lname){
+function sendConfirmEmail($userId, $type, $email, $guid, $fname, $lname){
 
 	$subject = "Dive Trainer - Account Confirmation";
 	$body = "<p>Dear $fname $lname,</p>
 			<br /><p>Thank you for registering as a user of Dive Trainer!\n\n
 			Please follow this confirmation address to finalize your account creation,
-			and have full access to our web services: <a href='http://upstatediving.com/DiveTrainer/confirmAccount.php?userId=$userId&guid=$guid'>
-			http://upstatediving.com/DiveTrainer/confirmAccount?userId=$userId&&guid=$guid</a>
+			and have full access to our web services: <a href='http://new.upstatediving.com/DiveTrainer/confirmAccount.php?userId=$userId&type=$type&guid=$guid'>
+			http://new.upstatediving.com/DiveTrainer/confirmAccount?userId=$userId&type=$type&guid=$guid</a>
 			</p><br /><br />
 			<p>Sincerely,</p>
 			<p>Upstate Diving</p>";
 	$altBody = "Dear Upstate Diving User,\n
 			Thank you for registering as a user of Dive Trainer!\n\n
 			Please follow this confirmation address to finalize your account creation,
-			and have full access to our web services: http://upstatediving.com/DiveTrainer/confirmAccount.php?userId=$userId&guid=$guid\n\n\n
+			and have full access to our web services: http://new.upstatediving.com/DiveTrainer/confirmAccount.php?userId=$userId&type=$type&guid=$guid\n\n\n
 			Sincerely,\n
 			Upstate Diving";
 
