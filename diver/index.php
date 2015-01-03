@@ -23,6 +23,14 @@
 	<div class="container container-fluid">
 		<div class="nav-offset"></div>
 		<div class="row">
+			<a href="./account.php?id=<?php echo $_SESSION['dive_trainer']['userId']; ?>">
+				<div class="adminHomeItem">
+					<h3>My Account</h3>
+					<span class="glyphicon glyphicon-chevron-right"></span>
+				</div>
+			</a>
+		</div>
+		<div class="row">
 			<a href="./goals.php">
 				<div class="adminHomeItem">
 					<h3>My Goals</h3>
@@ -30,14 +38,6 @@
 				</div>
 			</a>
 		</div>	
-		<div class="row">
-			<a href="./practices.php">
-				<div class="adminHomeItem">
-					<h3>Practices</h3>
-					<span class="glyphicon glyphicon-chevron-right"></span>
-				</div>
-			</a>
-		</div>
 		
 		<div class="ftr-offset"></div>
 	</div>
